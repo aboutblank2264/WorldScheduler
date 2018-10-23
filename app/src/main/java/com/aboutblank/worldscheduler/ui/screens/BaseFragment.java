@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -30,6 +32,8 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    public abstract void onScreenChanged(ScreenState screenState);
 
     /**
      * @return The layout id of this fragment

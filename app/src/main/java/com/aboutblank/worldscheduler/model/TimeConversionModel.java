@@ -1,15 +1,25 @@
 package com.aboutblank.worldscheduler.model;
 
-import org.joda.time.DateTimeZone;
+import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
 
 public class TimeConversionModel extends BaseModel {
     private final long currentMillis;
+    private final String timeZoneId;
 
-    private final DateTimeZone targetTimeZone;
-
-    public TimeConversionModel(boolean loading, Throwable error, long currentMillis, DateTimeZone targetTimeZone) {
-        super(loading, error);
+    public TimeConversionModel(long currentMillis,
+                               @ScreenState.State int state,
+                               String timeZoneId,
+                               Throwable error) {
+        super(state, error);
         this.currentMillis = currentMillis;
-        this.targetTimeZone = targetTimeZone;
+        this.timeZoneId = timeZoneId;
+    }
+
+    public long getCurrentMillis() {
+        return currentMillis;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
     }
 }

@@ -1,11 +1,21 @@
 package com.aboutblank.worldscheduler.model;
 
-public abstract class BaseModel {
-    protected final boolean loading;
-    protected final Throwable error;
+import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
 
-    public BaseModel(boolean loading, Throwable error) {
-        this.loading = loading;
+abstract class BaseModel {
+    private final @ScreenState.State int state;
+    private final Throwable error;
+
+    BaseModel(int state, Throwable error) {
+        this.state = state;
         this.error = error;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public Throwable getError() {
+        return error;
     }
 }
