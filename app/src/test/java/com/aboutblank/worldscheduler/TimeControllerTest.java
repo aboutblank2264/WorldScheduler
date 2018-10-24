@@ -1,7 +1,7 @@
 package com.aboutblank.worldscheduler;
 
-import com.aboutblank.worldscheduler.backend.time.TimeController;
-import com.aboutblank.worldscheduler.backend.time.TimeControllerImpl;
+import com.aboutblank.worldscheduler.data.time.TimeController;
+import com.aboutblank.worldscheduler.data.time.TimeControllerImpl;
 
 import org.joda.time.DateTimeZone;
 import org.junit.Before;

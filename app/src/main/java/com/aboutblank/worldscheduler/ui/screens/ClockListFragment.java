@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.TextClock;
 
 import com.aboutblank.worldscheduler.R;
-import com.aboutblank.worldscheduler.backend.data.Clock;
+import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
-import com.aboutblank.worldscheduler.viewmodel.ClockViewModel;
+import com.aboutblank.worldscheduler.viewmodels.ClockViewModel;
 
 import org.joda.time.DateTime;
 
@@ -51,7 +51,7 @@ public class ClockListFragment extends BaseFragment {
         viewModel.getScreenState().observe(this, new Observer<ScreenState>() {
             @Override
             public void onChanged(@Nullable ScreenState screenState) {
-                onScreenChanged(screenState);
+                onStateChanged(screenState);
             }
         });
     }
@@ -60,16 +60,37 @@ public class ClockListFragment extends BaseFragment {
         viewModel.getSavedClocks().observe(this, new Observer<List<Clock>>() {
             @Override
             public void onChanged(@Nullable List<Clock> clocks) {
-                onClocksRecieved(clocks);
+                onClocksReceived(clocks);
             }
         });
     }
 
-    @Override
-    public void onScreenChanged(ScreenState screenState) {
+    private void onClocksReceived(List<Clock> clocks) {
+
     }
 
-    private void onClocksRecieved(List<Clock> clocks) {
+    //TODO
+    private void onNewClockClicked() {
+
+    }
+
+    //TODO
+    private void onClockClicked(int position) {
+
+    }
+
+    @Override
+    public void onStateChanged(ScreenState screenState) {
+
+    }
+
+    @Override
+    public void showProgressBar() {
+
+    }
+
+    @Override
+    public void hideProgressBar() {
 
     }
 

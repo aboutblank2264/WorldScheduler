@@ -14,12 +14,11 @@ import android.view.MenuItem;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.screens.ClockListFragment;
-import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
 
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Screen {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,24 +100,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onStateChanged(ScreenState screenState) {
-        @ScreenState.State int state = screenState.getState();
-        switch (state) {
-            case ScreenState.LOADING:
-                break;
-            case ScreenState.DONE:
-
-                break;
-            case ScreenState.ERROR:
-                break;
-        }
-    }
-
-    @Override
-    public void showProgressBar() {
-
     }
 }

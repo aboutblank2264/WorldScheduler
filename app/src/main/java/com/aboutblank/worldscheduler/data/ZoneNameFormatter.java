@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.backend;
+package com.aboutblank.worldscheduler.data;
 
 public abstract class ZoneNameFormatter {
 

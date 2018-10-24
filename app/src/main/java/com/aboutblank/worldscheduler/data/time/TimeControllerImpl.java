@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.backend.time;
+package com.aboutblank.worldscheduler.data.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -8,7 +8,6 @@ import java.util.Set;
 
 public class TimeControllerImpl implements TimeController {
     public TimeControllerImpl() {
-        System.out.println(DateTimeZone.getAvailableIDs().toString());
     }
 
     @Override

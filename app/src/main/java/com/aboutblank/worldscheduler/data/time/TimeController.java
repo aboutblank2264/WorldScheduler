@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.backend.time;
+package com.aboutblank.worldscheduler.data.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

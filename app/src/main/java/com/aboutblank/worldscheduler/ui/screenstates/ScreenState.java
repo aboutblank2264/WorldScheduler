@@ -5,7 +5,7 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public abstract class ScreenState {
+public class ScreenState {
     private final @State int state;
 
     public ScreenState(@State int state) {

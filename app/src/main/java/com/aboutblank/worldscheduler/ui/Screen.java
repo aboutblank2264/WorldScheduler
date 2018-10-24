@@ -7,4 +7,6 @@ public interface Screen {
     void onStateChanged(ScreenState screenState);
 
     void showProgressBar();
+
+    void hideProgressBar();
 }
