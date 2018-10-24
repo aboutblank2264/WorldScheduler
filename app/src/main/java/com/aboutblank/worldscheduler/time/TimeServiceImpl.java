@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.data.time;
+package com.aboutblank.worldscheduler.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -6,8 +6,8 @@ import org.joda.time.LocalDateTime;
 
 import java.util.Set;
 
-public class TimeControllerImpl implements TimeController {
-    public TimeControllerImpl() {
+public class TimeServiceImpl implements TimeService {
+    public TimeServiceImpl() {
     }
 
     @Override

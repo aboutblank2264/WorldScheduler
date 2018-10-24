@@ -5,16 +5,16 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextClock;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
-import com.aboutblank.worldscheduler.viewmodels.ClockViewModel;
+import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
 
 import org.joda.time.DateTime;
 
@@ -28,21 +28,20 @@ public class ClockListFragment extends BaseFragment {
     @BindView(R.id.text_clock_main)
     TextClock main_clock;
 
-    private ClockViewModel viewModel;
+    private ClockListViewModel viewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        Log.d(LOG, DateTime.now().toString());
-        Log.d(LOG, DateTime.now().toLocalTime().toString());
         main_clock.setFormat12Hour(DateTime.now().toLocalTime().toString());
 
-        viewModel = ViewModelProviders.of(this).get(ClockViewModel.class);
+        viewModel = ViewModelProviders.of(this,
+                ((WorldApplication) requireContext().getApplicationContext()).getViewModelFactory())
+                .get(ClockListViewModel.class);
 
         initializeStateObservation();
-        initializeClockObservation();
         //TODO initialize RecyclerView
         return view;
     }
@@ -52,15 +51,6 @@ public class ClockListFragment extends BaseFragment {
             @Override
             public void onChanged(@Nullable ScreenState screenState) {
                 onStateChanged(screenState);
-            }
-        });
-    }
-
-    private void initializeClockObservation() {
-        viewModel.getSavedClocks().observe(this, new Observer<List<Clock>>() {
-            @Override
-            public void onChanged(@Nullable List<Clock> clocks) {
-                onClocksReceived(clocks);
             }
         });
     }
@@ -81,7 +71,14 @@ public class ClockListFragment extends BaseFragment {
 
     @Override
     public void onStateChanged(ScreenState screenState) {
-
+        switch (screenState.getState()) {
+            case ScreenState.DONE:
+                break;
+            case ScreenState.ERROR:
+                break;
+            case ScreenState.LOADING:
+                break;
+        }
     }
 
     @Override

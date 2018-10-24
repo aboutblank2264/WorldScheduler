@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.data.time;
+package com.aboutblank.worldscheduler.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -6,7 +6,7 @@ import org.joda.time.LocalDateTime;
 
 import java.util.Set;
 
-public interface TimeController {
+public interface TimeService {
 
     DateTimeZone getTimeZone(String id);
 

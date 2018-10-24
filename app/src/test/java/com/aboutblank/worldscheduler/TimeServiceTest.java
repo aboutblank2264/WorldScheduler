@@ -1,7 +1,7 @@
 package com.aboutblank.worldscheduler;
 
-import com.aboutblank.worldscheduler.data.time.TimeController;
-import com.aboutblank.worldscheduler.data.time.TimeControllerImpl;
+import com.aboutblank.worldscheduler.time.TimeService;
+import com.aboutblank.worldscheduler.time.TimeServiceImpl;
 
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -12,26 +12,26 @@ import java.util.Set;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
-public class TimeControllerTest {
+public class TimeServiceTest {
     private final static int millisInHour = 3600000;
     private final static String testZoneId = "Asia/Taipei";
 
-    private TimeController timeController;
+    private TimeService timeService;
 
-    public TimeControllerTest() {
+    public TimeServiceTest() {
     }
 
     @Before
     public void init() {
-        timeController = new TimeControllerImpl();
+        timeService = new TimeServiceImpl();
     }
 
     @Test
     public void fetchData_test() {
-        Set<String> timeZones = timeController.getSetTimeZoneNames();
+        Set<String> timeZones = timeService.getSetTimeZoneNames();
 //        System.out.println(timeZones.toString());
 
-        DateTimeZone taipei = timeController.getTimeZone(testZoneId);
+        DateTimeZone taipei = timeService.getTimeZone(testZoneId);
         assertNotNull(taipei);
 
         assertTrue(timeZones.contains(testZoneId));

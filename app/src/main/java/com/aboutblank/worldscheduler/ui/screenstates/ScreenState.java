@@ -2,18 +2,28 @@ package com.aboutblank.worldscheduler.ui.screenstates;
 
 import android.support.annotation.IntDef;
 
+import com.aboutblank.worldscheduler.backend.room.Clock;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 public class ScreenState {
     private final @State int state;
+    private final List<Clock> clocks;
 
-    public ScreenState(@State int state) {
+    public ScreenState(@State int state, List<Clock> clocks) {
         this.state = state;
+        this.clocks = clocks;
     }
 
-    public @State int getState() {
+    public @State
+    int getState() {
         return state;
+    }
+
+    public List<Clock> getClocks() {
+        return clocks;
     }
 
     @IntDef({LOADING, DONE, ERROR})
