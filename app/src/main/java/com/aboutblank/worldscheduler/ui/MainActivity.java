@@ -9,7 +9,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.screens.ClockListFragment;
@@ -67,5 +69,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onError(String name, Throwable throwable) {
+        if (throwable != null) {
+            Log.e(name, "", throwable);
+            Toast.makeText(this, throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Log.e(name, "Unknown error, this message should never happen.");
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_LONG).show();
+        }
     }
 }

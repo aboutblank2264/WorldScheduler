@@ -15,4 +15,8 @@ public interface DataService {
     void deleteClock(String timeZoneId);
 
     Clock getLocalClock();
+
+    long getOffset(String timeZoneId);
+
+    String getOffsetString(String timeZoneId);
 }

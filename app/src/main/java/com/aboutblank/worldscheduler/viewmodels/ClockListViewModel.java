@@ -57,4 +57,8 @@ public class ClockListViewModel extends ViewModel {
     public Clock getLocalClock() {
         return dataService.getLocalClock();
     }
+
+    public String getOffSetString(@NonNull final String timeZoneId) {
+        return dataService.getOffsetString(timeZoneId);
+    }
 }

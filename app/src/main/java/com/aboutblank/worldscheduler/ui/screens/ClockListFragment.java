@@ -11,11 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
+import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
@@ -92,13 +92,7 @@ public class ClockListFragment extends BaseFragment {
     }
 
     private void onError(Throwable throwable) {
-        if (throwable != null) {
-            Log.e(LOG, "", throwable);
-            Toast.makeText(requireContext(), throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        } else {
-            Log.e(LOG, "Unknown error, this message should never happen.");
-            Toast.makeText(requireContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
-        }
+        ((MainActivity) requireActivity()).onError(LOG, throwable);
         hideProgressBar();
     }
 
