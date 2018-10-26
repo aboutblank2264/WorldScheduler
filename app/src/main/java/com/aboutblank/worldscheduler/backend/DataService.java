@@ -13,4 +13,6 @@ public interface DataService {
     void saveClock(String timeZoneId);
 
     void deleteClock(String timeZoneId);
+
+    Clock getLocalClock();
 }

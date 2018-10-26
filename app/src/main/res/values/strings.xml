@@ -9,5 +9,5 @@
     
     <string name = "default_clock_format_12hr">hh:mm a</string>
     <string name = "default_clock_format_24hr">kk:mm</string>
-    <string name = "default_date_format">EEE, MM dd</string>
+    <string name = "default_date_format">EEE, MMM dd</string>
 </resources>

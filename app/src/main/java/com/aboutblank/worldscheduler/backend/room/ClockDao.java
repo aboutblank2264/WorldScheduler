@@ -14,7 +14,7 @@ public interface ClockDao {
     @Query("SELECT * from Clock where id = :timeZoneId")
     Clock getClockById(String timeZoneId);
 
-    @Query("SELECT * from Clock")
+    @Query("SELECT * from Clock order by id")
     List<Clock> getAllClocks();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

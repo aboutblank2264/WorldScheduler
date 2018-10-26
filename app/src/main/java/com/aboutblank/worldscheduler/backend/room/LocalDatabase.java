@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase;
 
 import java.util.List;
 
-@Database(entities = {Clock.class}, version = 1)
+@Database(entities = {Clock.class}, version = 2)
 public abstract class LocalDatabase extends RoomDatabase {
     abstract ClockDao clockDao();
 

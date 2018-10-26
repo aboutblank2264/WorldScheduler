@@ -4,6 +4,7 @@ import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 
 import java.util.List;
+import java.util.TimeZone;
 
 public class DataServiceImpl implements DataService {
     private LocalDatabase localDatabase;
@@ -30,5 +31,10 @@ public class DataServiceImpl implements DataService {
     @Override
     public void deleteClock(String timeZoneId) {
         localDatabase.deleteClock(timeZoneId);
+    }
+
+    @Override
+    public Clock getLocalClock() {
+        return new Clock(TimeZone.getDefault().getID());
     }
 }

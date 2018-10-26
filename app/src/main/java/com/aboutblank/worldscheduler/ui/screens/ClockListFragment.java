@@ -5,18 +5,21 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextClock;
+import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
+import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
+import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
-
-import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -25,8 +28,12 @@ import butterknife.BindView;
 public class ClockListFragment extends BaseFragment {
     private final static String LOG = ClockListFragment.class.getSimpleName();
 
-    @BindView(R.id.text_clock_main)
-    TextClock main_clock;
+    @BindView(R.id.main_clock)
+    SimpleDateClock mainClock;
+
+    @BindView(R.id.main_recycler)
+    RecyclerView recyclerView;
+    private ClockListRecyclerViewAdapter clockListAdapter;
 
     private ClockListViewModel viewModel;
 
@@ -35,15 +42,23 @@ public class ClockListFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        main_clock.setFormat12Hour(DateTime.now().toLocalTime().toString());
-
         viewModel = ViewModelProviders.of(this,
                 ((WorldApplication) requireContext().getApplicationContext()).getViewModelFactory())
                 .get(ClockListViewModel.class);
 
+        mainClock.setTimeZone(viewModel.getLocalClock().getTimeZoneId());
+
+        initializeRecyclerView();
         initializeStateObservation();
-        //TODO initialize RecyclerView
+
         return view;
+    }
+
+    private void initializeRecyclerView() {
+        clockListAdapter = new ClockListRecyclerViewAdapter(viewModel);
+        recyclerView.setAdapter(clockListAdapter);
+        recyclerView.setLayoutManager
+                (new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
     }
 
     private void initializeStateObservation() {
@@ -55,8 +70,46 @@ public class ClockListFragment extends BaseFragment {
         });
     }
 
-    private void onClocksReceived(List<Clock> clocks) {
+    @Override
+    public void onStateChanged(ScreenState screenState) {
+        switch (screenState.getState()) {
+            case ScreenState.DONE:
+                onClocksReceived(screenState.getClocks());
+                break;
+            case ScreenState.ERROR:
+                onError(screenState.getThrowable());
+                break;
+            case ScreenState.LOADING:
+                showProgressBar();
+                break;
+        }
+    }
 
+    private void onClocksReceived(List<Clock> clocks) {
+        Log.d(LOG, "Received list of clocks: " + clocks.toString());
+        clockListAdapter.update(clocks);
+        hideProgressBar();
+    }
+
+    private void onError(Throwable throwable) {
+        if (throwable != null) {
+            Log.e(LOG, "", throwable);
+            Toast.makeText(requireContext(), throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Log.e(LOG, "Unknown error, this message should never happen.");
+            Toast.makeText(requireContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
+        }
+        hideProgressBar();
+    }
+
+    @Override
+    public void showProgressBar() {
+        Log.d(LOG, "Showing progress bar");
+    }
+
+    @Override
+    public void hideProgressBar() {
+        Log.d(LOG, "Hiding progress bar");
     }
 
     //TODO
@@ -66,28 +119,6 @@ public class ClockListFragment extends BaseFragment {
 
     //TODO
     private void onClockClicked(int position) {
-
-    }
-
-    @Override
-    public void onStateChanged(ScreenState screenState) {
-        switch (screenState.getState()) {
-            case ScreenState.DONE:
-                break;
-            case ScreenState.ERROR:
-                break;
-            case ScreenState.LOADING:
-                break;
-        }
-    }
-
-    @Override
-    public void showProgressBar() {
-
-    }
-
-    @Override
-    public void hideProgressBar() {
 
     }
 

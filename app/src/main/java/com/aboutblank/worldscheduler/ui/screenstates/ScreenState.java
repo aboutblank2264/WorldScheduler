@@ -10,11 +10,22 @@ import java.util.List;
 
 public class ScreenState {
     private final @State int state;
-    private final List<Clock> clocks;
+    private List<Clock> clocks;
+    private Throwable throwable;
+
+    public ScreenState(int state) {
+        this.state = state;
+    }
 
     public ScreenState(@State int state, List<Clock> clocks) {
         this.state = state;
         this.clocks = clocks;
+    }
+
+    public ScreenState(int state, List<Clock> clocks, Throwable throwable) {
+        this.state = state;
+        this.clocks = clocks;
+        this.throwable = throwable;
     }
 
     public @State
@@ -24,6 +35,10 @@ public class ScreenState {
 
     public List<Clock> getClocks() {
         return clocks;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
     }
 
     @IntDef({LOADING, DONE, ERROR})
