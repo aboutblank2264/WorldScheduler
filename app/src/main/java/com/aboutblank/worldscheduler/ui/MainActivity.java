@@ -3,7 +3,6 @@ package com.aboutblank.worldscheduler.ui;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,12 +13,15 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.ui.screens.ClockListFragment;
 
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String LOG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,20 @@ public class MainActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
+        initializeToolbars();
+
+        Log.d(LOG, "Setting application FragmentManager");
+        MainFragmentManager manager = ((WorldApplication) getApplication()).setMainActivity(this);
+
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.main_placeholder, new ClockListFragment())
+//                .commit();
+
+        manager.changeFragmentView(new ClockListFragment());
+    }
+
+    private void initializeToolbars() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -39,11 +55,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.main_placeholder, new ClockListFragment());
-        transaction.commit();
     }
 
     @Override

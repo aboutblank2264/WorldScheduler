@@ -7,7 +7,10 @@ import org.joda.time.LocalDateTime;
 import java.util.Set;
 
 public class TimeServiceImpl implements TimeService {
+    private TimeFormatter timeFormatter;
+
     public TimeServiceImpl() {
+        timeFormatter = new TimeFormatter();
     }
 
     @Override

@@ -11,7 +11,7 @@
         >
 
         <com.aboutblank.worldscheduler.ui.components.SimpleDateClock
-            android:id = "@+id/main_clock"
+            android:id = "@+id/list_clock"
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
             android:gravity = "center"
@@ -22,28 +22,28 @@
             />
 
         <View
-            android:id = "@+id/main_divider"
+            android:id = "@+id/list_divider"
             android:layout_width = "match_parent"
             android:layout_height = "1dp"
             android:background = "@android:color/black"
             android:paddingStart = "8dp"
             android:paddingTop = "16dp"
             android:paddingEnd = "8dp"
-            app:layout_constraintTop_toBottomOf = "@id/main_clock"
+            app:layout_constraintTop_toBottomOf = "@id/list_clock"
             />
 
         <android.support.v7.widget.RecyclerView
-            android:id = "@+id/main_recycler"
+            android:id = "@+id/list_recycler"
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:layout_constraintBottom_toBottomOf = "parent"
-            app:layout_constraintTop_toBottomOf = "@id/main_divider"
+            app:layout_constraintTop_toBottomOf = "@id/list_divider"
             app:layout_constraintVertical_bias = "0"
             />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id = "@+id/fab"
+        android:id = "@+id/list_new_fab"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
         android:layout_gravity = "bottom|end"

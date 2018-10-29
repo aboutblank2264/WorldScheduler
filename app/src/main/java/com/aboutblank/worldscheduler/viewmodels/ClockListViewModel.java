@@ -1,64 +1,62 @@
 package com.aboutblank.worldscheduler.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
-import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.WorldApplication;
-import com.aboutblank.worldscheduler.backend.DataService;
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.ui.screenstates.ScreenState;
+import com.aboutblank.worldscheduler.ui.screens.ClockPickerFragment;
+import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
+import com.aboutblank.worldscheduler.ui.screenstates.State;
 
 import java.util.List;
 
-public class ClockListViewModel extends ViewModel {
-    private MutableLiveData<ScreenState> screenState = new MutableLiveData<>();
+public class ClockListViewModel extends BaseViewModel {
+    private MutableLiveData<ClockListScreenState> screenState;
 
-    private ThreadManager threadManager;
-    private DataService dataService;
-
-    public MutableLiveData<ScreenState> getScreenState() {
-        return screenState;
+    ClockListViewModel(WorldApplication application) {
+        super(application);
     }
 
-    public ClockListViewModel(WorldApplication application) {
-        this.threadManager = application.getThreadManager();
-        this.dataService = application.getDataService();
-
-        initialize();
-    }
-
-    private void initialize() {
+    @Override
+    void initialize() {
         screenState = new MutableLiveData<>();
-        screenState.setValue(new ScreenState(ScreenState.LOADING));
+        screenState.setValue(new ClockListScreenState(State.LOADING));
 
-        threadManager.execute(new Runnable() {
+        getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                onRetrieveClocks(dataService.getAllClocks());
+                onRetrieveClocks(getDataService().getAllClocks());
             }
         });
+    }
+
+    public static ClockListViewModel getClockListViewModel(Fragment fragment) {
+        return (ClockListViewModel) getViewModel(fragment, ClockListViewModel.class);
     }
 
     private void onRetrieveClocks(List<Clock> clocks) {
-        screenState.postValue(new ScreenState(ScreenState.DONE, clocks));
+        screenState.postValue(new ClockListScreenState(State.DONE, clocks));
     }
 
-    public void saveClock(@NonNull final String timeZoneId) {
-        threadManager.execute(new Runnable() {
-            @Override
-            public void run() {
-                dataService.saveClock(timeZoneId);
-            }
-        });
+    private void onError(Throwable throwable) {
+        screenState.postValue(new ClockListScreenState(State.ERROR, throwable));
     }
 
-    public Clock getLocalClock() {
-        return dataService.getLocalClock();
+    public MutableLiveData<ClockListScreenState> getScreenState() {
+        return screenState;
+    }
+
+    public String getLocalTimeZone() {
+        return getDataService().getLocalClock().getTimeZoneId();
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
-        return dataService.getOffsetString(timeZoneId);
+        return getDataService().getOffsetString(timeZoneId);
+    }
+
+    public void changeToPicker() {
+        getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
     }
 }

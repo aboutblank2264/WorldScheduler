@@ -20,6 +20,9 @@ public class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
         if(modelClass == ClockListViewModel.class) {
             return (T) new ClockListViewModel(application);
         }
+        if(modelClass == ClockPickerViewModel.class) {
+            return (T) new ClockPickerViewModel(application);
+        }
 
         return super.create(modelClass);
     }

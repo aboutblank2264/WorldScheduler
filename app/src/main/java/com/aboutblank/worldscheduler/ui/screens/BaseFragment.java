@@ -8,12 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aboutblank.worldscheduler.ui.Screen;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public abstract class BaseFragment extends Fragment implements Screen {
+public abstract class BaseFragment extends Fragment {
 
     private Unbinder unbinder;
 
@@ -32,6 +30,10 @@ public abstract class BaseFragment extends Fragment implements Screen {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    abstract void showProgressBar();
+
+    abstract void hideProgressBar();
 
     /**
      * @return The layout id of this fragment
