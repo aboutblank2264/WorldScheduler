@@ -35,11 +35,6 @@ public class MainActivity extends AppCompatActivity
         Log.d(LOG, "Setting application FragmentManager");
         MainFragmentManager manager = ((WorldApplication) getApplication()).setMainActivity(this);
 
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.main_placeholder, new ClockListFragment())
-//                .commit();
-
         manager.changeFragmentView(new ClockListFragment());
     }
 

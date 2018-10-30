@@ -1,5 +1,7 @@
 package com.aboutblank.worldscheduler.backend;
 
+import android.arch.lifecycle.LiveData;
+
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 
@@ -32,6 +34,11 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
+    public LiveData<List<Clock>> getAllClocksLive() {
+        return localDatabase.getAllClocksLive();
+    }
+
+    @Override
     public void saveClock(String timeZoneId) {
         localDatabase.saveClock(timeZoneId);
     }
@@ -56,7 +63,7 @@ public class DataServiceImpl implements DataService {
     public String getOffsetString(String timeZoneId) {
         long offset = getOffset(timeZoneId);
 
-        long hours = offset / MILLIS_TO_HOUR;
+        long hours = Math.abs(offset / MILLIS_TO_HOUR);
         long remainder = offset % MILLIS_TO_HOUR;
 
         StringBuilder strBuilder = new StringBuilder();

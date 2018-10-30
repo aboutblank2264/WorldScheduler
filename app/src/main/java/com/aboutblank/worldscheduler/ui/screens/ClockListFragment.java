@@ -72,6 +72,7 @@ public class ClockListFragment extends BaseFragment {
     }
 
     public void onStateChanged(ClockListScreenState screenState) {
+        Log.d(LOG, "State Received: " + screenState.toString());
         switch (screenState.getState()) {
             case DONE:
                 onClocksReceived(screenState.getClocks());
@@ -86,7 +87,6 @@ public class ClockListFragment extends BaseFragment {
     }
 
     private void onClocksReceived(List<Clock> clocks) {
-        Log.d(LOG, "Received list of clocks: " + clocks.toString());
         clockListAdapter.update(clocks);
         hideProgressBar();
     }
@@ -108,7 +108,7 @@ public class ClockListFragment extends BaseFragment {
 
     @OnClick(R.id.list_new_fab)
     public void onNewClockClicked() {
-        viewModel.changeToPicker();
+        viewModel.onFabClick();
     }
 
     //TODO

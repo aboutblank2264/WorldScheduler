@@ -9,11 +9,13 @@ import com.aboutblank.worldscheduler.time.TimeService;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.ui.screenstates.State;
 
-import java.util.Set;
+import java.util.List;
 
 public class ClockPickerViewModel extends BaseViewModel {
     private MutableLiveData<ClockPickerScreenState> screenState;
     private TimeService timeService;
+
+    private List<String> timeZones;
 
     ClockPickerViewModel(WorldApplication application) {
         super(application);
@@ -28,8 +30,10 @@ public class ClockPickerViewModel extends BaseViewModel {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                System.out.println(timeService == null);
-                onRetrieveTimeZones(timeService.getSetTimeZoneNames());
+                if(timeZones == null) {
+                    timeZones = timeService.getCityNames();
+                }
+                onRetrieveTimeZones(timeZones);
             }
         });
     }
@@ -42,11 +46,20 @@ public class ClockPickerViewModel extends BaseViewModel {
         return screenState;
     }
 
-    private void onRetrieveTimeZones(Set<String> timeZones) {
+    private void onRetrieveTimeZones(List<String> timeZones) {
         screenState.postValue(new ClockPickerScreenState(State.DONE, timeZones));
     }
 
-    public void saveClock(@NonNull final String timeZoneId) {
+    private void onError(Throwable throwable) {
+        screenState.postValue(new ClockPickerScreenState(State.ERROR, throwable));
+    }
+
+    public void onItemClicked(final String timeZoneId) {
+        saveClock(timeZoneId);
+        getFragmentManager().finishCurrentFragment();
+    }
+
+    private void saveClock(@NonNull final String timeZoneId) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {

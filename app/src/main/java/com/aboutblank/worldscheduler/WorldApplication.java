@@ -1,7 +1,6 @@
 package com.aboutblank.worldscheduler;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.DataService;
@@ -28,9 +27,7 @@ public class WorldApplication extends Application {
         super.onCreate();
         JodaTimeAndroid.init(this);
 
-        localDatabase = Room.databaseBuilder(this, LocalDatabase.class, LocalDatabase.class.getName())
-                .fallbackToDestructiveMigration()
-                .build();
+        localDatabase = LocalDatabase.getDatabase(this);
 
         dataService = new DataServiceImpl(getLocalDatabase());
 

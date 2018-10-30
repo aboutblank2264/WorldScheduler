@@ -3,20 +3,26 @@
     xmlns:app = "http://schemas.android.com/apk/res-auto"
     android:layout_width = "match_parent"
     android:layout_height = "match_parent"
+    android:focusable = "true"
     >
 
     <AutoCompleteTextView
         android:id = "@+id/pick_auto_text"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
+        android:completionThreshold = "2"
+        android:focusable = "true"
+        android:focusableInTouchMode = "true"
         android:hint = "Start typing city name"
+        android:inputType = "textNoSuggestions"
         android:padding = "8dp"
-        android:completionThreshold="3"
-        android:focusedByDefault="true"
         app:layout_constraintLeft_toLeftOf = "parent"
         app:layout_constraintRight_toLeftOf = "@id/pick_clear_text"
         app:layout_constraintTop_toTopOf = "parent"
-        />
+        >
+
+        <requestFocus />
+    </AutoCompleteTextView>
 
     <Button
         android:id = "@+id/pick_clear_text"
@@ -24,8 +30,8 @@
         android:layout_height = "wrap_content"
         android:background = "@drawable/ic_clear"
         android:backgroundTint = "@android:color/black"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf = "@id/pick_auto_text"
+        app:layout_constraintRight_toRightOf = "parent"
         app:layout_constraintTop_toTopOf = "@id/pick_auto_text"
         />
 

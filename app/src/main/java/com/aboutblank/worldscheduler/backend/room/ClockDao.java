@@ -1,5 +1,6 @@
 package com.aboutblank.worldscheduler.backend.room;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -16,6 +17,9 @@ public interface ClockDao {
 
     @Query("SELECT * from Clock order by id")
     List<Clock> getAllClocks();
+
+    @Query("SELECT * from Clock order by id")
+    LiveData<List<Clock>> getAllClocksLive();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertClock(@NonNull Clock clock);

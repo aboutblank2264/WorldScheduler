@@ -4,13 +4,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
-import java.util.Set;
+import java.util.List;
 
 public interface TimeService {
 
     DateTimeZone getTimeZone(String id);
 
-    Set<String> getSetTimeZoneNames();
+    List<String> getCityNames();
 
     DateTime getCurrentAtTimeZone(String id);
 

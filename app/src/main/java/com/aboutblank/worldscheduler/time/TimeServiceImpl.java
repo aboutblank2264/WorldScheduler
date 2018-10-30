@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
-import java.util.Set;
+import java.util.List;
 
 public class TimeServiceImpl implements TimeService {
     private TimeFormatter timeFormatter;
@@ -19,8 +19,8 @@ public class TimeServiceImpl implements TimeService {
     }
 
     @Override
-    public Set<String> getSetTimeZoneNames() {
-        return DateTimeZone.getAvailableIDs(); //TODO do some proper cleaning up of this list
+    public List<String> getCityNames() {
+        return timeFormatter.formatList(DateTimeZone.getAvailableIDs());
     }
 
     @Override

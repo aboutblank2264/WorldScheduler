@@ -29,4 +29,12 @@ public class ClockListScreenState extends ScreenState {
     public Throwable getThrowable() {
         return throwable;
     }
+
+    @Override
+    public String toString() {
+        return "ClockListScreenState { " +
+                "clocks = " + clocks +
+                ", throwable = " + throwable +
+                '}';
+    }
 }

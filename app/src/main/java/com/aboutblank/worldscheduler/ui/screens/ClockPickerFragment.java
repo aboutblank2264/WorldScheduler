@@ -14,11 +14,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.ui.Keyboard;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockPickerViewModel;
 
-import java.util.Set;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -33,8 +34,6 @@ public class ClockPickerFragment extends BaseFragment {
     @BindView(R.id.pick_clear_text)
     Button clearButton;
 
-    private Set<String> timeZones;
-
     private ClockPickerViewModel viewModel;
 
     @Nullable
@@ -48,6 +47,20 @@ public class ClockPickerFragment extends BaseFragment {
         initializeStateObservation();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(LOG, "onStart");
+        Keyboard.showKeyboard(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(LOG, "onPause");
+        Keyboard.hideKeyboard(this);
     }
 
     private void initializeAutoTextView() {
@@ -84,10 +97,8 @@ public class ClockPickerFragment extends BaseFragment {
         }
     }
 
-    private void onTimeZonesReceived(Set<String> timeZones) {
-        Log.i(LOG, "Received list of timezones: " + timeZones.toString());
-        this.timeZones = timeZones;
-        adapter.clear();
+    private void onTimeZonesReceived(List<String> timeZones) {
+//        Log.i(LOG, "Received list of timezones: " + timeZones.toString());
         adapter.addAll(timeZones);
         adapter.notifyDataSetChanged();
     }
@@ -98,14 +109,15 @@ public class ClockPickerFragment extends BaseFragment {
 
     @OnClick(R.id.pick_clear_text)
     public void onClearClick() {
-        autoTextView.setText("", false);
+        autoTextView.getText().clear();
     }
 
     void onItemClick(int position) {
+        String sel = adapter.getItem(position);
         Log.d(LOG, String.format("ItemClicked: position: %d", position));
-        Log.d(LOG, "Selected time zone: " + adapter.getItem(position));
-        viewModel.saveClock(adapter.getItem(position));
-        requireActivity().onBackPressed();
+        Log.d(LOG, "Selected time zone: " + sel);
+
+        viewModel.onItemClicked(sel);
     }
 
     @Override

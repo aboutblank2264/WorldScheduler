@@ -27,4 +27,8 @@ public class MainFragmentManager {
         }
         transaction.commit();
     }
+
+    public void finishCurrentFragment() {
+        manager.popBackStack();
+    }
 }

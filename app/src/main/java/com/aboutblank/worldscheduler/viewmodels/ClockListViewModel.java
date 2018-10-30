@@ -1,7 +1,9 @@
 package com.aboutblank.worldscheduler.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
@@ -24,10 +26,10 @@ public class ClockListViewModel extends BaseViewModel {
         screenState = new MutableLiveData<>();
         screenState.setValue(new ClockListScreenState(State.LOADING));
 
-        getThreadManager().execute(new Runnable() {
+        getDataService().getAllClocksLive().observeForever(new Observer<List<Clock>>() {
             @Override
-            public void run() {
-                onRetrieveClocks(getDataService().getAllClocks());
+            public void onChanged(@Nullable List<Clock> clocks) {
+                onRetrieveClocks(clocks);
             }
         });
     }
@@ -56,7 +58,7 @@ public class ClockListViewModel extends BaseViewModel {
         return getDataService().getOffsetString(timeZoneId);
     }
 
-    public void changeToPicker() {
+    public void onFabClick() {
         getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
     }
 }

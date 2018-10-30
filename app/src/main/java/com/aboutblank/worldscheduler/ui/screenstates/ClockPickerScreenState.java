@@ -1,16 +1,16 @@
 package com.aboutblank.worldscheduler.ui.screenstates;
 
-import java.util.Set;
+import java.util.List;
 
 public class ClockPickerScreenState extends ScreenState {
-    private Set<String> timeZones;
+    private List<String> timeZones;
     private Throwable throwable;
 
     public ClockPickerScreenState(State state) {
         super(state);
     }
 
-    public ClockPickerScreenState(State state, Set<String> timeZones) {
+    public ClockPickerScreenState(State state, List<String> timeZones) {
         super(state);
         this.timeZones = timeZones;
     }
@@ -20,7 +20,7 @@ public class ClockPickerScreenState extends ScreenState {
         this.throwable = throwable;
     }
 
-    public Set<String> getTimeZones() {
+    public List<String> getTimeZones() {
         return timeZones;
     }
 
