@@ -26,7 +26,7 @@ public class WorldApplication extends Application {
     public void onCreate() {
         super.onCreate();
         JodaTimeAndroid.init(this);
-
+        timeService = new TimeServiceImpl(getLocalDatabase(), getThreadManager());
     }
 
     public DataService getDataService() {
@@ -59,7 +59,7 @@ public class WorldApplication extends Application {
 
     public TimeService getTimeService() {
         if (timeService == null) {
-            timeService = new TimeServiceImpl();
+            throwException("Something very strange happened and TimeService was not created.");
         }
         return timeService;
     }

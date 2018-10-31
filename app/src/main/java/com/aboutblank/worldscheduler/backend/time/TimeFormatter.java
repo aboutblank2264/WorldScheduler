@@ -1,5 +1,9 @@
 package com.aboutblank.worldscheduler.backend.time;
 
+import com.aboutblank.worldscheduler.backend.room.TimeZone;
+
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +13,7 @@ public abstract class TimeFormatter {
     private static final char SLASH = '/';
     private static String[] INVALID_STRINGS = {"Etc"};
 
-    public static List<String> formatList(Set<String> cities) {
+    static List<String> formatList(Set<String> cities) {
         List<String> ret = new ArrayList<>();
 
         for (String city : cities) {
@@ -21,6 +25,18 @@ public abstract class TimeFormatter {
         return ret;
     }
 
+    static List<TimeZone> getListOfTimeZones() {
+        List<TimeZone> timeZoneList = new ArrayList<>();
+
+        for(String id : DateTimeZone.getAvailableIDs()) {
+            if(checkIfValid(id)) {
+                timeZoneList.add(new TimeZone(id, TimeFormatter.formatTimeZoneId(id)));
+            }
+        }
+
+        return timeZoneList;
+    }
+
     private static void checkForInvalid(List<String> list, String city) {
         for (String invalid : INVALID_STRINGS) {
             if (city.contains(invalid)) {
@@ -28,7 +44,17 @@ public abstract class TimeFormatter {
             }
         }
 
-        list.add(formatTimeZoneId(city));
+        list.add(city);
+    }
+
+    private static boolean checkIfValid(String city) {
+        for(String invalid : INVALID_STRINGS) {
+            if(city.contains(invalid)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static String formatTimeZoneId(String timeZoneId) {

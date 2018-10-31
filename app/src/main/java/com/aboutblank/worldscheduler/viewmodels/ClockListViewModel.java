@@ -55,7 +55,7 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
-        return getDataService().getOffsetString(timeZoneId);
+        return getDataService().getTimeDifference(timeZoneId);
     }
 
     public void onFabClick() {

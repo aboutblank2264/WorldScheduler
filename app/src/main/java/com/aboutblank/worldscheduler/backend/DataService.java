@@ -14,13 +14,13 @@ public interface DataService {
 
     LiveData<List<Clock>> getAllClocksLive();
 
-    void saveClock(String timeZoneId);
+    List<String> getCityNames();
+
+    void saveClockWithName(String timeZoneId);
 
     void deleteClock(String timeZoneId);
 
     Clock getLocalClock();
 
-    long getOffset(String timeZoneId);
-
-    String getOffsetString(String timeZoneId);
+    String getTimeDifference(String timeZoneId);
 }

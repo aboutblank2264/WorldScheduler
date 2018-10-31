@@ -63,12 +63,16 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         @BindView(R.id.item_time)
         SimpleDateClock simpleDateClock;
 
+        private Clock clock;
+
         ClockListHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
         void setClock(Clock clock) {
+            this.clock = clock;
+
             timeZone.setText(clock.getName());
 
             timeZoneCompare.setText(viewModel.getOffSetString(clock.getTimeZoneId()));

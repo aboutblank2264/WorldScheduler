@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
-import com.aboutblank.worldscheduler.backend.time.TimeService;
+import com.aboutblank.worldscheduler.backend.DataService;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.ui.screenstates.State;
 
@@ -13,13 +13,13 @@ import java.util.List;
 
 public class ClockPickerViewModel extends BaseViewModel {
     private MutableLiveData<ClockPickerScreenState> screenState;
-    private TimeService timeService;
+    private DataService dataService;
 
     private List<String> timeZones;
 
     ClockPickerViewModel(WorldApplication application) {
         super(application);
-        timeService = application.getTimeService();
+        dataService = application.getDataService();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ClockPickerViewModel extends BaseViewModel {
             @Override
             public void run() {
                 if(timeZones == null) {
-                    timeZones = timeService.getCityNames();
+                    timeZones = dataService.getCityNames();
                 }
                 onRetrieveTimeZones(timeZones);
             }
@@ -54,16 +54,16 @@ public class ClockPickerViewModel extends BaseViewModel {
         screenState.postValue(new ClockPickerScreenState(State.ERROR, throwable));
     }
 
-    public void onItemClicked(final String timeZoneId) {
-        saveClock(timeZoneId);
+    public void onItemClicked(final String name) {
+        saveClockWithName(name);
         getFragmentManager().finishCurrentFragment();
     }
 
-    private void saveClock(@NonNull final String timeZoneId) {
+    private void saveClockWithName(@NonNull final String name) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                getDataService().saveClock(timeZoneId);
+                getDataService().saveClockWithName(name);
             }
         });
     }

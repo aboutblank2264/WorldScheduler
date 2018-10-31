@@ -1,13 +1,12 @@
 package com.aboutblank.worldscheduler.backend.room;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(foreignKeys = @ForeignKey(entity = TimeZone.class,
-        parentColumns = "timeZoneId",
-        childColumns = "id"))
+import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
+
+@Entity
 public class Clock {
 
     @PrimaryKey(autoGenerate = true)
@@ -31,6 +30,10 @@ public class Clock {
     @NonNull
     public String getTimeZoneId() {
         return timeZoneId;
+    }
+
+    public String getName() {
+        return TimeFormatter.formatTimeZoneId(timeZoneId);
     }
 
     @Override

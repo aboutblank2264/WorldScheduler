@@ -2,22 +2,28 @@ package com.aboutblank.worldscheduler.backend.room;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity
 public class TimeZone {
     @PrimaryKey
+    @NonNull
     private String id;
+
+    @NonNull
     private String name;
 
-    public TimeZone(String id, String name) {
+    public TimeZone(@NonNull String id, @NonNull String name) {
         this.id = id;
         this.name = name;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
