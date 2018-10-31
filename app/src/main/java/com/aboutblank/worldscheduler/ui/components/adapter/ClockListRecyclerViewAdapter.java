@@ -36,7 +36,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull ClockListHolder holder, int position) {
-        holder.setClock(clocks.get(position).getTimeZoneId());
+        holder.setClock(clocks.get(position));
     }
 
     public void update(List<Clock> newClocks) {
@@ -68,12 +68,11 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             ButterKnife.bind(this, itemView);
         }
 
-        void setClock(String timeZoneId) {
+        void setClock(Clock clock) {
+            timeZone.setText(clock.getName());
 
-            timeZone.setText(timeZoneId);
-
-            timeZoneCompare.setText(viewModel.getOffSetString(timeZoneId));
-            simpleDateClock.setTimeZone(timeZoneId);
+            timeZoneCompare.setText(viewModel.getOffSetString(clock.getTimeZoneId()));
+            simpleDateClock.setTimeZone(clock.getTimeZoneId());
         }
     }
 }

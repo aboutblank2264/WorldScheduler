@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
-import com.aboutblank.worldscheduler.time.TimeService;
+import com.aboutblank.worldscheduler.backend.time.TimeService;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.ui.screenstates.State;
 

@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 import com.aboutblank.worldscheduler.backend.DataService;
 import com.aboutblank.worldscheduler.backend.DataServiceImpl;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
-import com.aboutblank.worldscheduler.time.TimeService;
-import com.aboutblank.worldscheduler.time.TimeServiceImpl;
+import com.aboutblank.worldscheduler.backend.time.TimeService;
+import com.aboutblank.worldscheduler.backend.time.TimeServiceImpl;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.MainFragmentManager;
 import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
@@ -27,48 +27,39 @@ public class WorldApplication extends Application {
         super.onCreate();
         JodaTimeAndroid.init(this);
 
-        localDatabase = LocalDatabase.getDatabase(this);
-
-        dataService = new DataServiceImpl(getLocalDatabase());
-
-        threadManager = new ThreadManager();
-
-        viewModelFactory = new ViewModelFactory(this);
-
-        timeService = new TimeServiceImpl();
     }
 
     public DataService getDataService() {
         if (dataService == null) {
-            throwException(DataService.class.getSimpleName());
+            dataService = new DataServiceImpl(getLocalDatabase(), getTimeService());
         }
         return dataService;
     }
 
     public LocalDatabase getLocalDatabase() {
         if (localDatabase == null) {
-            throwException(LocalDatabase.class.getSimpleName());
+            localDatabase = LocalDatabase.getDatabase(this);
         }
         return localDatabase;
     }
 
     public ThreadManager getThreadManager() {
         if (threadManager == null) {
-            throwException(ThreadManager.class.getSimpleName());
+            threadManager = new ThreadManager();
         }
         return threadManager;
     }
 
     public ViewModelFactory getViewModelFactory() {
         if (viewModelFactory == null) {
-            throwException(ViewModelFactory.class.getSimpleName());
+            viewModelFactory = new ViewModelFactory(this);
         }
         return viewModelFactory;
     }
 
     public TimeService getTimeService() {
         if (timeService == null) {
-            throwException(TimeService.class.getSimpleName());
+            timeService = new TimeServiceImpl();
         }
         return timeService;
     }

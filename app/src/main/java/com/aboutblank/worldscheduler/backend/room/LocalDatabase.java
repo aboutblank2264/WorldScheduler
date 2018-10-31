@@ -8,9 +8,10 @@ import android.content.Context;
 
 import java.util.List;
 
-@Database(entities = {Clock.class}, version = 2)
+@Database(entities = {Clock.class, TimeZone.class}, version = 4)
 public abstract class LocalDatabase extends RoomDatabase {
     abstract ClockDao clockDao();
+    abstract TimeZoneDao timeZoneDao();
 
     public static LocalDatabase getDatabase(Context context) {
         return Room.databaseBuilder(context, LocalDatabase.class, LocalDatabase.class.getName())
@@ -36,5 +37,9 @@ public abstract class LocalDatabase extends RoomDatabase {
 
     public void deleteClock(String timeZoneId) {
         clockDao().deleteClock(timeZoneId);
+    }
+
+    public TimeZone getTimeZoneById(String timeZoneId) {
+        return timeZoneDao().getTimeZoneById(timeZoneId);
     }
 }

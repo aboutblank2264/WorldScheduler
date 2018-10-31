@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.time;
+package com.aboutblank.worldscheduler.backend.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -15,4 +15,8 @@ public interface TimeService {
     DateTime getCurrentAtTimeZone(String id);
 
     DateTime convertTimeAtTimeZone(LocalDateTime time, String targetZoneId);
+
+    long getOffset(String timeZoneId);
+
+    String getOffsetString(String timeZoneId);
 }
