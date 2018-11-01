@@ -2,11 +2,12 @@ package com.aboutblank.worldscheduler.backend;
 
 import android.arch.lifecycle.LiveData;
 
+import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.ClockDao;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 import com.aboutblank.worldscheduler.backend.room.TimeZoneDao;
-import com.aboutblank.worldscheduler.backend.time.TimeService;
+import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 
 import org.joda.time.DateTimeZone;
 
@@ -16,12 +17,22 @@ public class DataServiceImpl implements DataService {
 
     private ClockDao clockDao;
     private TimeZoneDao timeZoneDao;
-    private TimeService timeService;
 
-    public DataServiceImpl(LocalDatabase localDatabase, final TimeService timeService) {
+    public DataServiceImpl(LocalDatabase localDatabase, ThreadManager threadManager) {
         this.clockDao = localDatabase.clockDao();
         this.timeZoneDao = localDatabase.timeZoneDao();
-        this.timeService = timeService;
+        initialize(threadManager);
+    }
+
+    private void initialize(ThreadManager threadManager) {
+        threadManager.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (timeZoneDao.count() == 0) {
+                    timeZoneDao.insert(TimeFormatter.getListOfTimeZones());
+                }
+            }
+        });
     }
 
     @Override
@@ -41,7 +52,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public List<String> getCityNames() {
-        return timeService.getCityNames();
+        return timeZoneDao.getTimeZoneNames();
     }
 
     @Override
@@ -61,6 +72,6 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public String getTimeDifference(String timeZoneId) {
-       return timeService.getTimeDifference(timeZoneId);
+       return TimeFormatter.getTimeDifference(timeZoneId);
     }
 }

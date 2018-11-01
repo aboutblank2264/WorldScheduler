@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 import com.aboutblank.worldscheduler.backend.DataService;
 import com.aboutblank.worldscheduler.backend.DataServiceImpl;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
-import com.aboutblank.worldscheduler.backend.time.TimeService;
-import com.aboutblank.worldscheduler.backend.time.TimeServiceImpl;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.MainFragmentManager;
 import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
@@ -18,7 +16,6 @@ public class WorldApplication extends Application {
     private LocalDatabase localDatabase;
     private DataService dataService;
     private ThreadManager threadManager;
-    private TimeService timeService;
     private ViewModelFactory viewModelFactory;
     private MainFragmentManager fragmentManager;
 
@@ -26,12 +23,12 @@ public class WorldApplication extends Application {
     public void onCreate() {
         super.onCreate();
         JodaTimeAndroid.init(this);
-        timeService = new TimeServiceImpl(getLocalDatabase(), getThreadManager());
+        dataService = new DataServiceImpl(getLocalDatabase(), getThreadManager());
     }
 
     public DataService getDataService() {
         if (dataService == null) {
-            dataService = new DataServiceImpl(getLocalDatabase(), getTimeService());
+            throwException("Something very strange has happened. DataService was not set");
         }
         return dataService;
     }
@@ -55,13 +52,6 @@ public class WorldApplication extends Application {
             viewModelFactory = new ViewModelFactory(this);
         }
         return viewModelFactory;
-    }
-
-    public TimeService getTimeService() {
-        if (timeService == null) {
-            throwException("Something very strange happened and TimeService was not created.");
-        }
-        return timeService;
     }
 
     public MainFragmentManager setMainActivity(@NonNull MainActivity mainActivity) {

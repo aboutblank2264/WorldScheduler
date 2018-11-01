@@ -35,4 +35,14 @@ public class TimeZone {
                 ", name = '" + name + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj.getClass() == TimeZone.class) {
+            TimeZone t = (TimeZone) obj;
+
+            return t.getId().equals(id) && t.getName().equals(name);
+        }
+        return false;
+    }
 }
