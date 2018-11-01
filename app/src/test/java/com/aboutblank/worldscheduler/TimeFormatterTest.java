@@ -23,6 +23,8 @@ public class TimeFormatterTest {
     private String la = "America/Los_Angeles";
     private String stjohns = "America/St_Johns";
 
+    private String foobar = "foo/bar";
+
     private String[] cities = {"Etc/GMT-2",
             "Pacific/Apia",
             "HST",
@@ -61,6 +63,8 @@ public class TimeFormatterTest {
 
     @Test
     public void formatTimeZoneId() {
+        assertEquals(TimeFormatter.formatTimeZoneId(""), "");
+        assertEquals(TimeFormatter.formatTimeZoneId(foobar), "bar");
         assertEquals(TimeFormatter.formatTimeZoneId("Pacific/Apia"), "Apia");
         assertEquals(TimeFormatter.formatTimeZoneId("America/Grand_Turk"), "Grand Turk");
         assertEquals(TimeFormatter.formatTimeZoneId("America/Indiana/Indianapolis"), "Indianapolis");

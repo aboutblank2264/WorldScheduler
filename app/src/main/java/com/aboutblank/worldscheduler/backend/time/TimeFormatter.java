@@ -1,5 +1,7 @@
 package com.aboutblank.worldscheduler.backend.time;
 
+import android.support.annotation.NonNull;
+
 import com.aboutblank.worldscheduler.backend.room.TimeZone;
 
 import org.joda.time.DateTimeZone;
@@ -65,7 +67,7 @@ public abstract class TimeFormatter {
         return true;
     }
 
-    public static String formatTimeZoneId(String timeZoneId) {
+    public static String formatTimeZoneId(@NonNull String timeZoneId) {
         int lastSlashIndex = timeZoneId.lastIndexOf(SLASH);
 
         return timeZoneId.substring(lastSlashIndex + 1).replace(UNDER, SPACE);
