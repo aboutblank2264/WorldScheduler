@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
@@ -23,6 +22,8 @@ public class ClockListViewModel extends BaseViewModel {
 
     @Override
     void initialize() {
+        System.out.println("ClockListVM initializing");
+
         screenState = new MutableLiveData<>();
         screenState.setValue(new ClockListScreenState(State.LOADING));
 
@@ -32,10 +33,6 @@ public class ClockListViewModel extends BaseViewModel {
                 onRetrieveClocks(clocks);
             }
         });
-    }
-
-    public static ClockListViewModel getClockListViewModel(Fragment fragment) {
-        return (ClockListViewModel) getViewModel(fragment, ClockListViewModel.class);
     }
 
     private void onRetrieveClocks(List<Clock> clocks) {
@@ -60,5 +57,11 @@ public class ClockListViewModel extends BaseViewModel {
 
     public void onFabClick() {
         getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        System.out.println("ClockListVM: onCleared");
     }
 }

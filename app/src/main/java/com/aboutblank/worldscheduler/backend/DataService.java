@@ -10,7 +10,7 @@ public interface DataService {
 
     Clock getClockById(String timeZoneId);
 
-    List<Clock> getAllClocks();
+    Clock getClockByName(String name);
 
     LiveData<List<Clock>> getAllClocksLive();
 

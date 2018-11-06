@@ -12,11 +12,8 @@ import java.util.List;
 @Dao
 public interface ClockDao {
 
-    @Query("SELECT * from Clock where id = :timeZoneId")
+    @Query("SELECT * from Clock where timeZoneId = :timeZoneId")
     Clock getClockById(String timeZoneId);
-
-    @Query("SELECT * from Clock order by id")
-    List<Clock> getAllClocks();
 
     @Query("SELECT * from Clock order by id")
     LiveData<List<Clock>> getAllClocksLive();
@@ -24,6 +21,6 @@ public interface ClockDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertClock(@NonNull Clock clock);
 
-    @Query("DELETE from Clock where id = :timeZoneId")
+    @Query("DELETE from Clock where timeZoneId = :timeZoneId")
     void deleteClock(String timeZoneId);
 }

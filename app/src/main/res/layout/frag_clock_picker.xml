@@ -8,30 +8,32 @@
 
     <AutoCompleteTextView
         android:id = "@+id/pick_auto_text"
-        android:layout_width = "wrap_content"
+        android:layout_width = "0dp"
         android:layout_height = "wrap_content"
         android:completionThreshold = "2"
         android:focusable = "true"
         android:focusableInTouchMode = "true"
-        android:hint = "Start typing city name"
+        android:textColor="@color/primaryTextColor"
+        android:textColorHint="@color/primaryDarkColor"
+        android:hint = "@string/picker_hint"
         android:inputType = "textNoSuggestions"
         android:padding = "8dp"
         app:layout_constraintLeft_toLeftOf = "parent"
         app:layout_constraintRight_toLeftOf = "@id/pick_clear_text"
         app:layout_constraintTop_toTopOf = "parent"
         >
-
         <requestFocus />
     </AutoCompleteTextView>
 
     <Button
         android:id = "@+id/pick_clear_text"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
+        android:layout_width = "24dp"
+        android:layout_height = "24dp"
         android:background = "@drawable/ic_clear"
-        android:backgroundTint = "@android:color/black"
-        app:layout_constraintLeft_toRightOf = "@id/pick_auto_text"
+        android:backgroundTint="@color/primaryDarkColor"
+        android:padding="8dp"
         app:layout_constraintRight_toRightOf = "parent"
+        app:layout_constraintBottom_toBottomOf="@id/pick_auto_text"
         app:layout_constraintTop_toTopOf = "@id/pick_auto_text"
         />
 

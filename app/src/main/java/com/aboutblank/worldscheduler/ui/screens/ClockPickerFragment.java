@@ -12,12 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.Keyboard;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockPickerViewModel;
+import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
 
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class ClockPickerFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        viewModel = ClockPickerViewModel.getClockPickerViewModel(this);
+        viewModel = ViewModelFactory.getClockPickerViewModel(this);
 
         initializeAutoTextView();
         initializeStateObservation();
@@ -91,6 +93,9 @@ public class ClockPickerFragment extends BaseFragment {
             case ERROR:
                 onError(screenState.getThrowable());
                 break;
+            case MESSAGE:
+                onMessage(screenState.getMessage());
+                break;
             case LOADING:
                 //Do nothing, the UI should be able to be used from the get go.
                 break;
@@ -98,7 +103,6 @@ public class ClockPickerFragment extends BaseFragment {
     }
 
     private void onTimeZonesReceived(List<String> timeZones) {
-//        Log.i(LOG, "Received list of timezones: " + timeZones.toString());
         adapter.addAll(timeZones);
         adapter.notifyDataSetChanged();
     }
@@ -114,10 +118,12 @@ public class ClockPickerFragment extends BaseFragment {
 
     void onItemClick(int position) {
         String sel = adapter.getItem(position);
-        Log.d(LOG, String.format("ItemClicked: position: %d", position));
-        Log.d(LOG, "Selected time zone: " + sel);
+        if (sel != null) {
+            Log.d(LOG, String.format("ItemClicked: position: %d", position));
+            Log.d(LOG, "Selected time zone: " + sel);
 
-        viewModel.onItemClicked(sel);
+            viewModel.onItemClicked(sel);
+        }
     }
 
     @Override
@@ -128,6 +134,10 @@ public class ClockPickerFragment extends BaseFragment {
     @Override
     public void hideProgressBar() {
         //Do nothing.
+    }
+
+    public void onMessage(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 
     @Override

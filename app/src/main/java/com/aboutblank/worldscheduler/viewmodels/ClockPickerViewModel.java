@@ -2,7 +2,6 @@ package com.aboutblank.worldscheduler.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.DataService;
@@ -30,16 +29,12 @@ public class ClockPickerViewModel extends BaseViewModel {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                if(timeZones == null) {
+                if (timeZones == null) {
                     timeZones = dataService.getCityNames();
                 }
                 onRetrieveTimeZones(timeZones);
             }
         });
-    }
-
-    public static ClockPickerViewModel getClockPickerViewModel(Fragment fragment) {
-        return (ClockPickerViewModel) ClockPickerViewModel.getViewModel(fragment, ClockPickerViewModel.class);
     }
 
     public MutableLiveData<ClockPickerScreenState> getScreenState() {
@@ -54,16 +49,20 @@ public class ClockPickerViewModel extends BaseViewModel {
         screenState.postValue(new ClockPickerScreenState(State.ERROR, throwable));
     }
 
-    public void onItemClicked(final String name) {
-        saveClockWithName(name);
-        getFragmentManager().finishCurrentFragment();
+    private void onMessage(@NonNull String message) {
+        screenState.postValue(new ClockPickerScreenState(State.MESSAGE, message));
     }
 
-    private void saveClockWithName(@NonNull final String name) {
+    public void onItemClicked(@NonNull final String name) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                getDataService().saveClockWithName(name);
+                if (getDataService().getClockByName(name) == null) {
+                    getDataService().saveClockWithName(name);
+                    getFragmentManager().finishCurrentFragment();
+                } else {
+                    onMessage("This time zone has already be saved!");
+                }
             }
         });
     }

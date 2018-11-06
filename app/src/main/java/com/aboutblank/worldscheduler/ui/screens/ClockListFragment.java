@@ -19,6 +19,7 @@ import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
+import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class ClockListFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        viewModel = ClockListViewModel.getClockListViewModel(this);
+        viewModel = ViewModelFactory.getClockListViewModel(this);
 
         mainClock.setTimeZone(viewModel.getLocalTimeZone());
 
@@ -53,6 +54,12 @@ public class ClockListFragment extends BaseFragment {
         initializeStateObservation();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG, "onResume");
     }
 
     private void initializeRecyclerView() {

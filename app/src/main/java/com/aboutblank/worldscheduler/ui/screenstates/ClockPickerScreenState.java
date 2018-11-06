@@ -5,6 +5,7 @@ import java.util.List;
 public class ClockPickerScreenState extends ScreenState {
     private List<String> timeZones;
     private Throwable throwable;
+    private String message;
 
     public ClockPickerScreenState(State state) {
         super(state);
@@ -20,11 +21,20 @@ public class ClockPickerScreenState extends ScreenState {
         this.throwable = throwable;
     }
 
+    public ClockPickerScreenState(final State state, final String message) {
+        super(state);
+        this.message = message;
+    }
+
     public List<String> getTimeZones() {
         return timeZones;
     }
 
     public Throwable getThrowable() {
         return throwable;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

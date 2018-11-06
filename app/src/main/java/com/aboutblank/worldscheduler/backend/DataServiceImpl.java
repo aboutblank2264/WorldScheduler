@@ -41,8 +41,9 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public List<Clock> getAllClocks() {
-        return clockDao.getAllClocks();
+    public Clock getClockByName(String name) {
+        String timeZone = timeZoneDao.getTimeZoneIdByName(name);
+        return clockDao.getClockById(timeZone);
     }
 
     @Override

@@ -20,6 +20,7 @@ public class MainFragmentManager {
 
     public void changeFragmentView(Fragment fragment, boolean backStack) {
         FragmentTransaction transaction = manager.beginTransaction()
+                .setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
                 .replace(R.id.main_placeholder, fragment);
 
         if (backStack) {
