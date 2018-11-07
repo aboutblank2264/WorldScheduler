@@ -15,7 +15,7 @@ public class MainFragmentManager {
     }
 
     public void changeFragmentView(Fragment fragment) {
-        changeFragmentView(fragment, true);
+        changeFragmentView(fragment, false);
     }
 
     public void changeFragmentView(Fragment fragment, boolean backStack) {
@@ -30,6 +30,6 @@ public class MainFragmentManager {
     }
 
     public void finishCurrentFragment() {
-        manager.popBackStack();
+        manager.popBackStackImmediate();
     }
 }

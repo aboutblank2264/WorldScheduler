@@ -2,6 +2,7 @@ package com.aboutblank.worldscheduler.ui.screens;
 
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aboutblank.worldscheduler.R;
-import com.aboutblank.worldscheduler.ThreadManager;
-import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
@@ -42,7 +41,6 @@ public class ClockListFragment extends BaseFragment {
     FloatingActionButton fab;
 
     private ClockListViewModel viewModel;
-    private ThreadManager threadManager;
 
     private Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
         @Override
@@ -57,20 +55,24 @@ public class ClockListFragment extends BaseFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         viewModel = ViewModelFactory.getClockListViewModel(this);
-        threadManager = ((WorldApplication) requireActivity().getApplication()).getThreadManager();
 
         mainClock.setTimeZone(viewModel.getLocalTimeZone());
 
         initializeRecyclerView();
-        observeState();
 
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(LOG, "onResume");
+    public void onStart() {
+        super.onStart();
+        viewModel.getScreenState().observe(this, observer);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        viewModel.getScreenState().removeObservers(this);
     }
 
     private void initializeRecyclerView() {
@@ -86,24 +88,18 @@ public class ClockListFragment extends BaseFragment {
 
     public void onStateChanged(final ClockListScreenState screenState) {
         Log.d(LOG, "State Received: " + screenState.toString());
-
-        threadManager.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                switch (screenState.getState()) {
-                    case LOADING:
-                        showProgressBar();
-                        break;
-                    case DONE:
-                        onClocksReceived(screenState.getClocks());
-                        break;
-                    case ERROR:
-                        onError(screenState.getThrowable());
-                        break;
-                }
-            }
-        });
+        Log.d(LOG, String.valueOf(Looper.getMainLooper() == Looper.myLooper()));
+        switch (screenState.getState()) {
+            case LOADING:
+                showProgressBar();
+                break;
+            case DONE:
+                onClocksReceived(screenState.getClocks());
+                break;
+            case ERROR:
+                onError(screenState.getThrowable());
+                break;
+        }
     }
 
     private void onClocksReceived(List<Clock> clocks) {
