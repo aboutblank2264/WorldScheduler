@@ -11,6 +11,8 @@ import com.aboutblank.worldscheduler.ui.screenstates.State;
 import java.util.List;
 
 public class ClockPickerViewModel extends BaseViewModel {
+    private final static String LOG = ClockPickerViewModel.class.getSimpleName();
+
     private MutableLiveData<ClockPickerScreenState> screenState;
     private DataService dataService;
 

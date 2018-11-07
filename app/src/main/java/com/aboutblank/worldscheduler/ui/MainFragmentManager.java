@@ -15,7 +15,7 @@ public class MainFragmentManager {
     }
 
     public void changeFragmentView(Fragment fragment) {
-        changeFragmentView(fragment, false);
+        changeFragmentView(fragment, true);
     }
 
     public void changeFragmentView(Fragment fragment, boolean backStack) {

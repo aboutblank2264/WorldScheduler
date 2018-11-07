@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 
+import java.util.Objects;
+
 @Entity
 public class Clock {
 
@@ -42,5 +44,14 @@ public class Clock {
                 "id = " + id +
                 ", timeZoneId = '" + timeZoneId + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Clock clock = (Clock) o;
+        return id == clock.id &&
+                Objects.equals(timeZoneId, clock.timeZoneId);
     }
 }

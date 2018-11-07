@@ -8,6 +8,7 @@ import com.aboutblank.worldscheduler.backend.DataServiceImpl;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.MainFragmentManager;
+import com.aboutblank.worldscheduler.viewmodels.ResourcesProvider;
 import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -18,6 +19,7 @@ public class WorldApplication extends Application {
     private ThreadManager threadManager;
     private ViewModelFactory viewModelFactory;
     private MainFragmentManager fragmentManager;
+    private ResourcesProvider resourcesProvider;
 
     @Override
     public void onCreate() {
@@ -65,6 +67,13 @@ public class WorldApplication extends Application {
             throwException(MainFragmentManager.class.getSimpleName());
         }
         return fragmentManager;
+    }
+
+    public ResourcesProvider getResourcesProvider() {
+        if(resourcesProvider == null) {
+            resourcesProvider = new ResourcesProvider(this);
+        }
+        return resourcesProvider;
     }
 
     private void throwException(String className) {

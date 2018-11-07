@@ -46,7 +46,7 @@ public class ClockPickerFragment extends BaseFragment {
         viewModel = ViewModelFactory.getClockPickerViewModel(this);
 
         initializeAutoTextView();
-        initializeStateObservation();
+        observeState();
 
         return view;
     }
@@ -76,7 +76,7 @@ public class ClockPickerFragment extends BaseFragment {
         });
     }
 
-    private void initializeStateObservation() {
+    private void observeState() {
         viewModel.getScreenState().observe(this, new Observer<ClockPickerScreenState>() {
             @Override
             public void onChanged(@Nullable ClockPickerScreenState screenState) {

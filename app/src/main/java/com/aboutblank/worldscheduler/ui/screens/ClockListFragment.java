@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.ThreadManager;
+import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.MainActivity;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
@@ -40,6 +42,14 @@ public class ClockListFragment extends BaseFragment {
     FloatingActionButton fab;
 
     private ClockListViewModel viewModel;
+    private ThreadManager threadManager;
+
+    private Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
+        @Override
+        public void onChanged(@Nullable final ClockListScreenState screenState) {
+            onStateChanged(screenState);
+        }
+    };
 
     @Nullable
     @Override
@@ -47,11 +57,12 @@ public class ClockListFragment extends BaseFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         viewModel = ViewModelFactory.getClockListViewModel(this);
+        threadManager = ((WorldApplication) requireActivity().getApplication()).getThreadManager();
 
         mainClock.setTimeZone(viewModel.getLocalTimeZone());
 
         initializeRecyclerView();
-        initializeStateObservation();
+        observeState();
 
         return view;
     }
@@ -69,28 +80,30 @@ public class ClockListFragment extends BaseFragment {
                 (new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
     }
 
-    private void initializeStateObservation() {
-        viewModel.getScreenState().observe(this, new Observer<ClockListScreenState>() {
-            @Override
-            public void onChanged(@Nullable ClockListScreenState screenState) {
-                onStateChanged(screenState);
-            }
-        });
+    private void observeState() {
+        viewModel.getScreenState().observe(this, observer);
     }
 
-    public void onStateChanged(ClockListScreenState screenState) {
+    public void onStateChanged(final ClockListScreenState screenState) {
         Log.d(LOG, "State Received: " + screenState.toString());
-        switch (screenState.getState()) {
-            case DONE:
-                onClocksReceived(screenState.getClocks());
-                break;
-            case ERROR:
-                onError(screenState.getThrowable());
-                break;
-            case LOADING:
-                showProgressBar();
-                break;
-        }
+
+        threadManager.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                switch (screenState.getState()) {
+                    case LOADING:
+                        showProgressBar();
+                        break;
+                    case DONE:
+                        onClocksReceived(screenState.getClocks());
+                        break;
+                    case ERROR:
+                        onError(screenState.getThrowable());
+                        break;
+                }
+            }
+        });
     }
 
     private void onClocksReceived(List<Clock> clocks) {

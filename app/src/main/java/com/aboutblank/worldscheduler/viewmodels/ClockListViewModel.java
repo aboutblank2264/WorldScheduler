@@ -14,7 +14,10 @@ import com.aboutblank.worldscheduler.ui.screenstates.State;
 import java.util.List;
 
 public class ClockListViewModel extends BaseViewModel {
+    private final static String LOG = ClockListViewModel.class.getSimpleName();
     private MutableLiveData<ClockListScreenState> screenState;
+
+    private Observer<List<Clock>> observer;
 
     ClockListViewModel(WorldApplication application) {
         super(application);
@@ -22,21 +25,29 @@ public class ClockListViewModel extends BaseViewModel {
 
     @Override
     void initialize() {
-        System.out.println("ClockListVM initializing");
+        debug(LOG, "initializing");
 
         screenState = new MutableLiveData<>();
         screenState.setValue(new ClockListScreenState(State.LOADING));
 
-        getDataService().getAllClocksLive().observeForever(new Observer<List<Clock>>() {
-            @Override
-            public void onChanged(@Nullable List<Clock> clocks) {
-                onRetrieveClocks(clocks);
-            }
-        });
+        getDataService().getAllClocksLive().observeForever(getObserver());
+    }
+
+    private Observer<List<Clock>> getObserver() {
+        if(observer == null) {
+            observer = new Observer<List<Clock>>() {
+                @Override
+                public void onChanged(@Nullable List<Clock> clocks) {
+                    onRetrieveClocks(clocks);
+                }
+            };
+        }
+
+        return observer;
     }
 
     private void onRetrieveClocks(List<Clock> clocks) {
-        screenState.postValue(new ClockListScreenState(State.DONE, clocks));
+        screenState.setValue(new ClockListScreenState(State.DONE, clocks));
     }
 
     private void onError(Throwable throwable) {
@@ -62,6 +73,7 @@ public class ClockListViewModel extends BaseViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        System.out.println("ClockListVM: onCleared");
+        debug(LOG, "onCleared");
+        getDataService().getAllClocksLive().removeObserver(getObserver());
     }
 }

@@ -1,6 +1,8 @@
 package com.aboutblank.worldscheduler.ui.components.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.ListAdapter;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +20,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockListRecyclerViewAdapter.ClockListHolder> {
-    private List<Clock> clocks;
+public class ClockListRecyclerViewAdapter extends ListAdapter<Clock, ClockListRecyclerViewAdapter.ClockListHolder> {
+    private List<Clock> clocks = new ArrayList<>();
     private ClockListViewModel viewModel;
 
     public ClockListRecyclerViewAdapter(ClockListViewModel viewModel) {
-        this.clocks = new ArrayList<>();
+        super(DIFF_CALLBACK);
         this.viewModel = viewModel;
     }
 
@@ -36,20 +38,14 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull ClockListHolder holder, int position) {
-        holder.setClock(clocks.get(position));
+        holder.setClock(getItem(position));
     }
 
     public void update(List<Clock> newClocks) {
         if (newClocks != null) {
-            clocks.clear();
             clocks.addAll(newClocks);
-            notifyDataSetChanged();
+            submitList(clocks);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return clocks.size();
     }
 
     class ClockListHolder extends RecyclerView.ViewHolder {
@@ -79,4 +75,16 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             simpleDateClock.setTimeZone(clock.getTimeZoneId());
         }
     }
+
+    private final static DiffUtil.ItemCallback<Clock> DIFF_CALLBACK = new DiffUtil.ItemCallback<Clock>() {
+        @Override
+        public boolean areItemsTheSame(final Clock oldItem, final Clock newItem) {
+            return oldItem.equals(newItem);
+        }
+
+        @Override
+        public boolean areContentsTheSame(final Clock oldItem, final Clock newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 }
