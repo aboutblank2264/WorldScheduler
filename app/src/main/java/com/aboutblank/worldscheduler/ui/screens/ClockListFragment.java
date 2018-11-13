@@ -82,10 +82,6 @@ public class ClockListFragment extends BaseFragment {
                 (new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
     }
 
-    private void observeState() {
-        viewModel.getScreenState().observe(this, observer);
-    }
-
     public void onStateChanged(final ClockListScreenState screenState) {
         Log.d(LOG, "State Received: " + screenState.toString());
         Log.d(LOG, String.valueOf(Looper.getMainLooper() == Looper.myLooper()));

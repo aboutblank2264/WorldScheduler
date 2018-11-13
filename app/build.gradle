@@ -46,7 +46,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
     //Joda-Time Android
-    implementation 'net.danlew:android.joda:2.10.0'
+    implementation 'net.danlew:android.joda:2.10.1'
 
     //Test
     testImplementation 'junit:junit:4.12'

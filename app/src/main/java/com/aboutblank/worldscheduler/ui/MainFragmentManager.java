@@ -30,6 +30,6 @@ public class MainFragmentManager {
     }
 
     public void finishCurrentFragment() {
-        manager.popBackStackImmediate();
+        manager.popBackStack();
     }
 }

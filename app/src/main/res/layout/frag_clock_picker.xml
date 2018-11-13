@@ -17,6 +17,7 @@
         android:textColorHint="@color/primaryDarkColor"
         android:hint = "@string/picker_hint"
         android:inputType = "textNoSuggestions"
+        android:textSize="@dimen/header_text_size"
         android:padding = "8dp"
         app:layout_constraintLeft_toLeftOf = "parent"
         app:layout_constraintRight_toLeftOf = "@id/pick_clear_text"
@@ -27,8 +28,8 @@
 
     <Button
         android:id = "@+id/pick_clear_text"
-        android:layout_width = "24dp"
-        android:layout_height = "24dp"
+        android:layout_width = "36dp"
+        android:layout_height = "36dp"
         android:background = "@drawable/ic_clear"
         android:backgroundTint="@color/primaryDarkColor"
         android:padding="8dp"

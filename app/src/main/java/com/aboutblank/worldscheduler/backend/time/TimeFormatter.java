@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.room.TimeZone;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 
@@ -78,17 +79,23 @@ public abstract class TimeFormatter {
     }
 
     public static String getTimeDifference(String nowId, String targetId) {
-        long current = LocalDateTime.now(DateTimeZone.forID(nowId)).toDateTime().getMillis();
-        long target = LocalDateTime.now(DateTimeZone.forID(targetId)).toDateTime().getMillis();
+        long current = DateTime.now().getMillis();
+        return getTimeDifferenceWithTime(nowId, targetId, current);
+    }
+
+    public static String getTimeDifferenceWithTime(String nowId, String targetId, long millis) {
+        DateTimeZone nowZone = DateTimeZone.forID(nowId);
+        DateTimeZone targetZone = DateTimeZone.forID(targetId);
+        long current = new LocalDateTime(millis, nowZone).toDateTime().getMillis();
+        long target = new LocalDateTime(millis, targetZone).toDateTime().getMillis();
 
         long timeDiff = current - target;
 
-        long hoursBetween = timeDiff / MILLIS_TO_HOUR % 24;
+        long hoursDifference = timeDiff / MILLIS_TO_HOUR % 24;
         long remainder = timeDiff / MILLIS_TO_HALF % 60;
 
-
-        return String.valueOf(Math.abs(hoursBetween)) +
+        return String.valueOf(Math.abs(hoursDifference)) +
                 (Math.abs(remainder) >= 30 ? ".5 " : " ") +
-                (hoursBetween > 0 ? AHEAD : BEHIND);
+                (hoursDifference > 0 ? AHEAD : BEHIND);
     }
 }

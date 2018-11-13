@@ -6,6 +6,7 @@ import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.ClockDao;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
+import com.aboutblank.worldscheduler.backend.room.TimeZone;
 import com.aboutblank.worldscheduler.backend.room.TimeZoneDao;
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 
@@ -57,8 +58,13 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void saveClockWithName(String name) {
-        clockDao.insertClock(new Clock(timeZoneDao.getTimeZoneIdByName(name)));
+    public List<TimeZone> getTimeZones() {
+        return timeZoneDao.getTimeZones();
+    }
+
+    @Override
+    public void saveClockWithId(String timeZoneId) {
+        clockDao.insertClock(new Clock(timeZoneId));
     }
 
     @Override

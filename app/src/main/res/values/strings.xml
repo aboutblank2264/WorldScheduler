@@ -11,5 +11,5 @@
     <string name = "default_clock_format_24hr">kk:mm</string>
     <string name = "default_date_format">EEE, MMM dd</string>
     <string name = "illegal_screenstate_message">Passed the wrong ScreenState! Expected %s, was given %s</string>
-    <string name = "picker_hint">Start typing city name</string>
+    <string name = "picker_hint">Start typing timezone city name</string>
 </resources>

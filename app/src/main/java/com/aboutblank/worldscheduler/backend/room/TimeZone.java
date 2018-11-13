@@ -28,12 +28,18 @@ public class TimeZone {
         return name;
     }
 
-    @Override
-    public String toString() {
+    public String toPrintableName() {
         return "TimeZone { " +
                 "zoneId = '" + id + '\'' +
                 ", name = '" + name + '\'' +
                 '}';
+    }
+
+    //NOTE: this is kind of a hack to get AutoCompleteTextView to work as quickly as possible.
+    // https://stackoverflow.com/questions/13063849/using-android-autocompletetextview-with-arrayadapterobjects-instead-of-arrayad
+    @Override
+    public String toString() {
+        return name;
     }
 
     @Override

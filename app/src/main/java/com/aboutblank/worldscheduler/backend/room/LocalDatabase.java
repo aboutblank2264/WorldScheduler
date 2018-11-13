@@ -28,7 +28,7 @@ public abstract class LocalDatabase extends RoomDatabase {
 //        return clockDao().getAllClocksLive();
 //    }
 //
-//    public void saveClockWithName(String timeZoneId) {
+//    public void saveClockWithId(String timeZoneId) {
 //        clockDao().insertClock(new Clock(timeZoneId));
 //    }
 //
