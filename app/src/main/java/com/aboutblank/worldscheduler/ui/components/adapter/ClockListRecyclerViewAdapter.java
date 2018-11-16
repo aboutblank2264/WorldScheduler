@@ -2,9 +2,7 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,6 @@ import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.components.ClockListDetail;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
-import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +23,19 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     private final static String LOG = ClockListRecyclerViewAdapter.class.getSimpleName();
 
     private List<Clock> clocks;
-    private ClockListViewModel viewModel;
-    private RecyclerView recyclerView;
+    private ClockListAdapterMediator adapterMediator;
 
-    private int previousExpanded = -1;
+    private RecyclerView.RecycledViewPool recycledViewPool;
 
-    public ClockListRecyclerViewAdapter(ClockListViewModel viewModel) {
+    public ClockListRecyclerViewAdapter(ClockListAdapterMediator adapterMediator) {
         this.clocks = new ArrayList<>();
-        this.viewModel = viewModel;
+        this.adapterMediator = adapterMediator;
     }
 
     @Override
     public void onAttachedToRecyclerView(@NonNull final RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
+        recycledViewPool = recyclerView.getRecycledViewPool();
     }
 
     @NonNull
@@ -52,17 +48,10 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
         Clock clock = clocks.get(position);
-        holder.setClock(clock.getTimeZoneId(), clock.getName());
-        holder.setExpanded(previousExpanded == position);
+        holder.setClock(clock.getTimeZoneId(), clock.getName(), clock.getSavedTimes());
+        holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);
 
-        holder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                previousExpanded = holder.isExpanded() ? -1 : holder.getAdapterPosition();
-                TransitionManager.beginDelayedTransition(recyclerView);
-                notifyDataSetChanged();
-            }
-        });
+        holder.setOnClickListener(adapterMediator.getOnClickListener());
     }
 
     public void update(List<Clock> newClocks) {
@@ -97,24 +86,25 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
         private String timeZoneId;
         private String name;
+        private List<Long> savedTimes;
 
         ClockListHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             setDetailListeners();
+            clockListDetail.setRecyclerViewPool(recycledViewPool);
         }
 
-        void setClock(@NonNull String timeZoneId, @NonNull String name) {
+        void setClock(@NonNull String timeZoneId, @NonNull String name, List<Long> savedTimes) {
             this.timeZoneId = timeZoneId;
             this.name = name;
+            this.savedTimes = savedTimes;
 
             timeZone.setText(name);
 
-            timeZoneCompare.setText(viewModel.getOffSetString(timeZoneId));
+            timeZoneCompare.setText(adapterMediator.getOffSetString(timeZoneId));
             simpleDateClock.setTimeZone(timeZoneId);
-
-            //TODO set saved times.
         }
 
         void setOnClickListener(View.OnClickListener listener) {
@@ -122,26 +112,15 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setDetailListeners() {
-            clockListDetail.setOnAddClickedListener(new ClockListDetail.OnAddClickedListener() {
-                @Override
-                public void onAdd() {
-                    Log.d(LOG, "OnAdd Clicked");
-                }
-            });
+            clockListDetail.setOnAddClickedListener(adapterMediator.getOnAddClickedListener());
 
-            clockListDetail.setOnDeleteClickedListener(new ClockListDetail.OnDeleteClickedListener() {
-                @Override
-                public void onDelete() {
-                    Log.d(LOG, "OnDelete Clicked");
-                    viewModel.onDelete(timeZoneId);
-                }
-            });
+            clockListDetail.setOnDeleteClickedListener(adapterMediator.getOnDeleteClickedListener());
         }
 
         void setExpanded(boolean activated) {
             clockListDetail.setVisibility(activated ? View.VISIBLE : View.GONE);
             if(activated) {
-                //TODO do things.
+                clockListDetail.update(savedTimes);
             }
         }
 

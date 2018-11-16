@@ -4,5 +4,6 @@ public enum State {
     LOADING,
     DONE,
     ERROR,
-    MESSAGE
+    MESSAGE,
+    DIALOG
 }

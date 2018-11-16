@@ -63,7 +63,7 @@ public class ClockPickerFragment extends BaseFragment {
         Log.d(LOG, "onPause");
         Keyboard.hideKeyboard(this);
     }
-//
+
     private void initializeAutoTextView(List<TimeZone> timeZones) {
         adapter = new ArrayAdapter<>(requireContext(), R.layout.clock_picker_list_item, R.id.picker_text, timeZones);
         autoTextView.setAdapter(adapter);

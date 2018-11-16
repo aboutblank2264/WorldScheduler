@@ -11,12 +11,15 @@ import android.widget.Button;
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListDetailRecyclerViewAdapter;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ClockListDetail extends ConstraintLayout {
     @BindView(R.id.detail_saved)
     RecyclerView saved;
+    ClockListDetailRecyclerViewAdapter adapter;
 
     @BindView(R.id.detail_add)
     Button addButton;
@@ -36,7 +39,7 @@ public class ClockListDetail extends ConstraintLayout {
         View root = inflate(context, R.layout.clock_list_detail_layout, this);
         ButterKnife.bind(root);
 
-        ClockListDetailRecyclerViewAdapter adapter = new ClockListDetailRecyclerViewAdapter();
+        adapter = new ClockListDetailRecyclerViewAdapter();
         saved.setAdapter(adapter);
         saved.setLayoutManager(new LinearLayoutManager(context));
 
@@ -48,7 +51,7 @@ public class ClockListDetail extends ConstraintLayout {
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if(onDeleteClickedListener != null) {
+                if (onDeleteClickedListener != null) {
                     onDeleteClickedListener.onDelete();
                 }
             }
@@ -59,11 +62,19 @@ public class ClockListDetail extends ConstraintLayout {
         addButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if(onAddClickedListener != null) {
+                if (onAddClickedListener != null) {
                     onAddClickedListener.onAdd();
                 }
             }
         });
+    }
+
+    public void update(List<Long> savedTimes) {
+        adapter.update(savedTimes);
+    }
+
+    public void setRecyclerViewPool(RecyclerView.RecycledViewPool viewPool) {
+        saved.setRecycledViewPool(viewPool);
     }
 
     public void setOnDeleteClickedListener(OnDeleteClickedListener listener) {

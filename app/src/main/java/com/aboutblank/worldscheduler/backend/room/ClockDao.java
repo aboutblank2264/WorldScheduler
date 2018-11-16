@@ -2,6 +2,7 @@ package com.aboutblank.worldscheduler.backend.room;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -23,4 +24,7 @@ public interface ClockDao {
 
     @Query("DELETE from Clock where timeZoneId = :timeZoneId")
     void deleteClock(String timeZoneId);
+
+    @Delete
+    void deleteClock(@NonNull Clock clock);
 }

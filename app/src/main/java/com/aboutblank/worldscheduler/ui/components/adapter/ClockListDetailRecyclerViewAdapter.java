@@ -7,9 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<ClockListDetailRecyclerViewAdapter.ClockListDetailViewHolder> {
-
+    private List<Long> savedTimes = new ArrayList<>();
 
     @NonNull
     @Override
@@ -20,7 +24,13 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListDetailViewHolder holder, final int position) {
+        long time = savedTimes.get(position);
+        int[] clockTime = TimeFormatter.toClockTime(time);
+    }
 
+    public void update(List<Long> times) {
+        savedTimes.clear();
+//        savedTimes.addAll(times);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.aboutblank.worldscheduler.backend;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.TimeZone;
@@ -22,6 +23,8 @@ public interface DataService {
     void saveClockWithId(String timeZoneId);
 
     void deleteClock(String timeZoneId);
+
+    void deleteClock(@NonNull Clock clock);
 
     Clock getLocalClock();
 

@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,7 +17,9 @@ import android.view.ViewGroup;
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.MainActivity;
+import com.aboutblank.worldscheduler.ui.components.ClockListDetail;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
+import com.aboutblank.worldscheduler.ui.components.adapter.ClockListAdapterMediator;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
@@ -27,7 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class ClockListFragment extends BaseFragment {
+public class ClockListFragment extends BaseFragment implements ClockListAdapterMediator {
     private final static String LOG = ClockListFragment.class.getSimpleName();
 
     @BindView(R.id.list_clock)
@@ -41,6 +44,8 @@ public class ClockListFragment extends BaseFragment {
     FloatingActionButton fab;
 
     private ClockListViewModel viewModel;
+    private int currentExpandedPosition = -1;
+    private List<Clock> clocks;
 
     private Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
         @Override
@@ -76,7 +81,7 @@ public class ClockListFragment extends BaseFragment {
     }
 
     private void initializeRecyclerView() {
-        clockListAdapter = new ClockListRecyclerViewAdapter(viewModel);
+        clockListAdapter = new ClockListRecyclerViewAdapter(this);
         recyclerView.setAdapter(clockListAdapter);
         recyclerView.setLayoutManager
                 (new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
@@ -99,6 +104,7 @@ public class ClockListFragment extends BaseFragment {
     }
 
     private void onClocksReceived(List<Clock> clocks) {
+        this.clocks = clocks;
         clockListAdapter.update(clocks);
         hideProgressBar();
     }
@@ -123,12 +129,57 @@ public class ClockListFragment extends BaseFragment {
         viewModel.onFabClick();
     }
 
-    //TODO
-    private void onClockClicked(int position) {
-    }
-
     @Override
     public int getLayout() {
         return R.layout.frag_clock_list;
     }
+
+    /*------------------------------------------------------------------*/
+    /*----------------- RecyclerView Adapter Stuff ---------------------*/
+    /*------------------------------------------------------------------*/
+
+    @Override
+    public int getCurrentExpandedPosition() {
+        return currentExpandedPosition;
+    }
+
+    @Override
+    public View.OnClickListener getOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                currentExpandedPosition = (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ? -1 : recyclerView.getChildAdapterPosition(v);
+                Log.d(LOG, "OnClick " + currentExpandedPosition);
+                TransitionManager.beginDelayedTransition(recyclerView);
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+        };
+    }
+
+    @Override
+    public String getOffSetString(@NonNull final String timeZoneId) {
+        return viewModel.getOffSetString(timeZoneId);
+    }
+
+    @Override
+    public ClockListDetail.OnAddClickedListener getOnAddClickedListener() {
+        return new ClockListDetail.OnAddClickedListener() {
+            @Override
+            public void onAdd() {
+                Log.d(LOG, "OnAdd Clicked");
+            }
+        };
+    }
+
+    @Override
+    public ClockListDetail.OnDeleteClickedListener getOnDeleteClickedListener() {
+        return new ClockListDetail.OnDeleteClickedListener() {
+            @Override
+            public void onDelete() {
+                Log.d(LOG, "OnDelete Clicked");
+                viewModel.onDelete(clocks.get(currentExpandedPosition));
+            }
+        };
+    }
+
 }

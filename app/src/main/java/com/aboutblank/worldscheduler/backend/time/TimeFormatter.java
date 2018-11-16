@@ -7,6 +7,7 @@ import com.aboutblank.worldscheduler.backend.room.TimeZone;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,5 +98,20 @@ public abstract class TimeFormatter {
         return String.valueOf(Math.abs(hoursDifference)) +
                 (Math.abs(remainder) >= 30 ? ".5 " : " ") +
                 (hoursDifference > 0 ? AHEAD : BEHIND);
+    }
+
+    public static int[] toClockTime(long millisOfDay) {
+        LocalTime localTime = LocalTime.fromMillisOfDay(millisOfDay);
+        int[] time = new int[2];
+        time[0] = localTime.getHourOfDay();
+        time[1] = localTime.getMinuteOfHour();
+
+        return time;
+    }
+
+    public static long toMillisOfDay(int hour, int minute) {
+        LocalTime localTime = new LocalTime(hour, hour);
+
+        return localTime.getMillisOfDay();
     }
 }

@@ -1,6 +1,7 @@
 package com.aboutblank.worldscheduler.backend;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.backend.room.Clock;
@@ -70,6 +71,11 @@ public class DataServiceImpl implements DataService {
     @Override
     public void deleteClock(String timeZoneId) {
         clockDao.deleteClock(timeZoneId);
+    }
+
+    @Override
+    public void deleteClock(@NonNull final Clock clock) {
+        clockDao.deleteClock(clock);
     }
 
     @Override

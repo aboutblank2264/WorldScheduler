@@ -73,11 +73,14 @@ public class ClockListViewModel extends BaseViewModel {
         getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
     }
 
-    public void onDelete(@NonNull final String timeZoneId) {
+    public void onAdd(@NonNull final String targetTimeZone) {
+    }
+
+    public void onDelete(@NonNull final Clock clock) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                getDataService().deleteClock(timeZoneId);
+                getDataService().deleteClock(clock);
             }
         });
     }

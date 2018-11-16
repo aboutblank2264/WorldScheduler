@@ -37,6 +37,10 @@ abstract class BaseViewModel extends ViewModel {
         return fragmentManager;
     }
 
+    ResourcesProvider getProvider() {
+        return provider;
+    }
+
     String getString(@StringRes final int strId) {
         return provider.getString(strId);
     }
