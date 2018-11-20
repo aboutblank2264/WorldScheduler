@@ -3,14 +3,16 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.ui.components.ClockListDetail;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 
 import java.util.ArrayList;
@@ -48,18 +50,16 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
         Clock clock = clocks.get(position);
-        holder.setClock(clock.getTimeZoneId(), clock.getName(), clock.getSavedTimes());
+        holder.setClockInfo(clock);
         holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);
 
         holder.setOnClickListener(adapterMediator.getOnClickListener());
     }
 
     public void update(List<Clock> newClocks) {
-        if (newClocks != null) {
-            clocks.clear();
-            clocks.addAll(newClocks);
-            notifyDataSetChanged();
-        }
+        clocks.clear();
+        clocks.addAll(newClocks);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -81,51 +81,58 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         @BindView(R.id.item_time)
         SimpleDateClock simpleDateClock;
 
-        @BindView(R.id.item_details)
-        ClockListDetail clockListDetail;
-
-        private String timeZoneId;
-        private String name;
-        private List<Long> savedTimes;
+        @BindView(R.id.item_menu)
+        TextView menuButton;
 
         ClockListHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            setDetailListeners();
-            clockListDetail.setRecyclerViewPool(recycledViewPool);
+            setMenuButton();
         }
 
-        void setClock(@NonNull String timeZoneId, @NonNull String name, List<Long> savedTimes) {
-            this.timeZoneId = timeZoneId;
-            this.name = name;
-            this.savedTimes = savedTimes;
+        void setClockInfo(@NonNull Clock clock) {
+            timeZone.setText(clock.getName());
 
-            timeZone.setText(name);
-
-            timeZoneCompare.setText(adapterMediator.getOffSetString(timeZoneId));
-            simpleDateClock.setTimeZone(timeZoneId);
+            timeZoneCompare.setText(adapterMediator.getOffSetString(clock.getTimeZoneId()));
+            simpleDateClock.setTimeZone(clock.getTimeZoneId());
         }
 
         void setOnClickListener(View.OnClickListener listener) {
             layout.setOnClickListener(listener);
         }
 
-        void setDetailListeners() {
-            clockListDetail.setOnAddClickedListener(adapterMediator.getOnAddClickedListener());
+        void setMenuButton() {
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    PopupMenu popupMenu = adapterMediator.getPopupMenu(menuButton);
+                    popupMenu.inflate(R.menu.clock_list_side_menu);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(final MenuItem item) {
+                            switch(item.getItemId()) {
+                                case R.id.add_new:
+                                    Log.d(LOG, "Add New");
+                                    break;
+                                case R.id.delete:
+                                    Log.d(LOG, "Delete");
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
 
-            clockListDetail.setOnDeleteClickedListener(adapterMediator.getOnDeleteClickedListener());
+                    popupMenu.show();
+                }
+            });
         }
 
         void setExpanded(boolean activated) {
-            clockListDetail.setVisibility(activated ? View.VISIBLE : View.GONE);
-            if(activated) {
-                clockListDetail.update(savedTimes);
-            }
         }
 
         boolean isExpanded() {
-            return clockListDetail.getVisibility() == View.VISIBLE;
+            return false;
         }
     }
 }

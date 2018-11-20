@@ -1,5 +1,6 @@
 package com.aboutblank.worldscheduler.ui.screens;
 
+import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.os.Looper;
@@ -13,11 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.TimePicker;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.MainActivity;
-import com.aboutblank.worldscheduler.ui.components.ClockListDetail;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListAdapterMediator;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
@@ -135,7 +137,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     /*------------------------------------------------------------------*/
-    /*----------------- RecyclerView Adapter Stuff ---------------------*/
+    /*------------------- ClockListAdapterMediator ---------------------*/
     /*------------------------------------------------------------------*/
 
     @Override
@@ -148,7 +150,8 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                currentExpandedPosition = (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ? -1 : recyclerView.getChildAdapterPosition(v);
+                currentExpandedPosition =
+                        (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ? -1 : recyclerView.getChildAdapterPosition(v);
                 Log.d(LOG, "OnClick " + currentExpandedPosition);
                 TransitionManager.beginDelayedTransition(recyclerView);
                 recyclerView.getAdapter().notifyDataSetChanged();
@@ -162,24 +165,17 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     @Override
-    public ClockListDetail.OnAddClickedListener getOnAddClickedListener() {
-        return new ClockListDetail.OnAddClickedListener() {
+    public TimePickerDialog.OnTimeSetListener getOnTimeSetListener() {
+        return new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onAdd() {
-                Log.d(LOG, "OnAdd Clicked");
+            public void onTimeSet(final TimePicker view, final int hourOfDay, final int minute) {
+
             }
         };
     }
 
     @Override
-    public ClockListDetail.OnDeleteClickedListener getOnDeleteClickedListener() {
-        return new ClockListDetail.OnDeleteClickedListener() {
-            @Override
-            public void onDelete() {
-                Log.d(LOG, "OnDelete Clicked");
-                viewModel.onDelete(clocks.get(currentExpandedPosition));
-            }
-        };
+    public PopupMenu getPopupMenu(View view) {
+        return new PopupMenu(requireContext(), view);
     }
-
 }

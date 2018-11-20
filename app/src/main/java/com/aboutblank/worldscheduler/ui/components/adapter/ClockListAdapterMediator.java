@@ -1,9 +1,9 @@
 package com.aboutblank.worldscheduler.ui.components.adapter;
 
+import android.app.TimePickerDialog;
 import android.support.annotation.NonNull;
 import android.view.View;
-
-import com.aboutblank.worldscheduler.ui.components.ClockListDetail;
+import android.widget.PopupMenu;
 
 public interface ClockListAdapterMediator {
     int getCurrentExpandedPosition();
@@ -12,7 +12,7 @@ public interface ClockListAdapterMediator {
 
     String getOffSetString(@NonNull String timeZoneId);
 
-    ClockListDetail.OnAddClickedListener getOnAddClickedListener();
+    TimePickerDialog.OnTimeSetListener getOnTimeSetListener();
 
-    ClockListDetail.OnDeleteClickedListener getOnDeleteClickedListener();
+    PopupMenu getPopupMenu(View view);
 }

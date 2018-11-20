@@ -57,6 +57,10 @@ public class ClockListViewModel extends BaseViewModel {
         viewModelScreenState.postValue(new ClockListScreenState(State.ERROR, throwable));
     }
 
+    public void onAddDialog() {
+        viewModelScreenState.postValue(new ClockListScreenState(State.DIALOG));
+    }
+
     public LiveData<ClockListScreenState> getScreenState() {
         return joinedScreenState;
     }
@@ -73,14 +77,21 @@ public class ClockListViewModel extends BaseViewModel {
         getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
     }
 
-    public void onAdd(@NonNull final String targetTimeZone) {
-    }
-
     public void onDelete(@NonNull final Clock clock) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
                 getDataService().deleteClock(clock);
+            }
+        });
+    }
+
+    public void onAddTime(@NonNull final Clock clock, final int hour, final int minute) {
+        getThreadManager().execute(new Runnable() {
+            @Override
+            public void run() {
+                clock.addSavedTime(getDataService().toMillisofDay(hour, minute));
+                getDataService().updateClock(clock);
             }
         });
     }

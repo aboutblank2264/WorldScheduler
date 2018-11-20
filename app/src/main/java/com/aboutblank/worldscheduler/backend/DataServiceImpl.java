@@ -69,6 +69,11 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
+    public void updateClock(@NonNull Clock clock) {
+        clockDao.insertClock(clock);
+    }
+
+    @Override
     public void deleteClock(String timeZoneId) {
         clockDao.deleteClock(timeZoneId);
     }
@@ -86,5 +91,10 @@ public class DataServiceImpl implements DataService {
     @Override
     public String getTimeDifference(String timeZoneId) {
        return TimeFormatter.getTimeDifference(timeZoneId);
+    }
+
+    @Override
+    public long toMillisofDay(int hour, int minute) {
+        return TimeFormatter.toMillisOfDay(hour, minute);
     }
 }

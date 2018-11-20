@@ -1,6 +1,9 @@
 package com.aboutblank.worldscheduler.ui;
 
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -9,9 +12,11 @@ import com.aboutblank.worldscheduler.R;
 
 public class MainFragmentManager {
     private FragmentManager manager;
+    private Context mainContext;
 
     public MainFragmentManager(@NonNull MainActivity mainActivity) {
         this.manager = mainActivity.getSupportFragmentManager();
+        this.mainContext = mainActivity;
     }
 
     public void changeFragmentView(Fragment fragment) {
@@ -31,5 +36,14 @@ public class MainFragmentManager {
 
     public void finishCurrentFragment() {
         manager.popBackStack();
+    }
+
+    public void showDialog(@NonNull DialogFragment fragment, @NonNull String tag) {
+        fragment.show(manager, tag);
+    }
+
+    public void showTimePickerDialog(TimePickerDialog.OnTimeSetListener onTimeSetListener, int hour, int minute) {
+        new TimePickerDialog(mainContext, onTimeSetListener, hour, minute, false)
+                .show();
     }
 }

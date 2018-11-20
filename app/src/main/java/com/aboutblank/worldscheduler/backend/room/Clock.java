@@ -47,6 +47,10 @@ public class Clock {
         this.savedTimes = savedTimes;
     }
 
+    public void addSavedTime(long savedTime) {
+        savedTimes.add(savedTime);
+    }
+
     @NonNull
     public String getTimeZoneId() {
         return timeZoneId;

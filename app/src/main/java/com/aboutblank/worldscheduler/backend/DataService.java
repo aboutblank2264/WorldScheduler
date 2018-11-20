@@ -22,6 +22,8 @@ public interface DataService {
 
     void saveClockWithId(String timeZoneId);
 
+    void updateClock(@NonNull Clock clock);
+
     void deleteClock(String timeZoneId);
 
     void deleteClock(@NonNull Clock clock);
@@ -29,4 +31,6 @@ public interface DataService {
     Clock getLocalClock();
 
     String getTimeDifference(String timeZoneId);
+
+    long toMillisofDay(int hour, int minute);
 }
