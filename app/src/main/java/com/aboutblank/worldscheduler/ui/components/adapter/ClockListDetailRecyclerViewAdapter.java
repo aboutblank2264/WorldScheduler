@@ -2,14 +2,14 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
-import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
-import com.aboutblank.worldscheduler.backend.time.TimePair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<ClockListDetailRecyclerViewAdapter.ClockListDetailViewHolder> {
-    private List<TimePair> savedTimes = new ArrayList<>();
+    private List<Long> savedTimes = new ArrayList<>();
     private ClockListAdapterMediator adapterMediator;
+
+    ClockListDetailRecyclerViewAdapter(final ClockListAdapterMediator adapterMediator) {
+        this.adapterMediator = adapterMediator;
+    }
 
     @NonNull
     @Override
@@ -30,18 +34,11 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListDetailViewHolder holder, final int position) {
-        TimePair pair = savedTimes.get(position);
-        String fromTime = TimeFormatter.toClockTime(pair.getFrom());
-        String toTime = TimeFormatter.toClockTime(pair.getTo());
-
-        holder.setTimes(fromTime, toTime);
+        String[] times = adapterMediator.getTimeStrings(savedTimes.get(position));
+        holder.setTimes(times[0], times[1]);
     }
 
-    public void setAdapterMediator(final ClockListAdapterMediator adapterMediator) {
-        this.adapterMediator = adapterMediator;
-    }
-
-    public void update(List<TimePair> times) {
+    void update(List<Long> times) {
         savedTimes.clear();
         savedTimes.addAll(times);
     }
@@ -52,6 +49,9 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
     }
 
     class ClockListDetailViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.detail_layout)
+        ViewGroup layout;
+
         @BindView(R.id.detail_from_clock)
         TextView fromClock;
 
@@ -61,6 +61,13 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
         ClockListDetailViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            layout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(final View v, final MotionEvent event) {
+                    Log.d("OnTouchListener", event.toString());
+                    return false;
+                }
+            });
         }
 
         void setTimes(String fromTime, String toTime) {

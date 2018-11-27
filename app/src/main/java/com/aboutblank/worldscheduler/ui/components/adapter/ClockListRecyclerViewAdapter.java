@@ -1,7 +1,9 @@
 package com.aboutblank.worldscheduler.ui.components.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,9 +44,9 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @NonNull
     @Override
-    public ClockListRecyclerViewAdapter.ClockListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ClockListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_clock_list_item, parent, false);
-        return new ClockListHolder(view);
+        return new ClockListHolder(view, parent.getContext());
     }
 
     @Override
@@ -84,14 +86,27 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         @BindView(R.id.item_menu)
         TextView menuButton;
 
-        ClockListHolder(View itemView) {
+        @BindView(R.id.item_saved_time_rv)
+        RecyclerView savedTimeRecyclerView;
+        ClockListDetailRecyclerViewAdapter adapter;
+
+        private List<Long> savedTimes;
+
+        ClockListHolder(View itemView, Context context) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             setMenuButton();
+
+            adapter = new ClockListDetailRecyclerViewAdapter(adapterMediator);
+            savedTimeRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+            savedTimeRecyclerView.setAdapter(adapter);
         }
 
         void setClockInfo(@NonNull Clock clock) {
+            savedTimes = clock.getSavedTimes() == null ? new ArrayList<Long>() : clock.getSavedTimes();
+
             timeZone.setText(clock.getName());
 
             timeZoneCompare.setText(adapterMediator.getOffSetString(clock.getTimeZoneId()));
@@ -111,12 +126,14 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(final MenuItem item) {
-                            switch(item.getItemId()) {
+                            switch (item.getItemId()) {
                                 case R.id.add_new:
                                     Log.d(LOG, "Add New");
+                                    adapterMediator.addNew(ClockListHolder.this.getAdapterPosition());
                                     break;
                                 case R.id.delete:
                                     Log.d(LOG, "Delete");
+                                    adapterMediator.onDelete(ClockListHolder.this.getAdapterPosition());
                                     break;
                             }
                             return false;
@@ -129,10 +146,18 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setExpanded(boolean activated) {
+            if (savedTimes.size() > 0) {
+                Log.d(LOG, String.valueOf(activated));
+                savedTimeRecyclerView.setVisibility(activated ? View.VISIBLE : View.GONE);
+                if (activated) {
+                    Log.d(LOG, savedTimes.toString());
+                    adapter.update(savedTimes);
+                }
+            }
         }
 
         boolean isExpanded() {
-            return false;
+            return savedTimeRecyclerView.getVisibility() == View.VISIBLE;
         }
     }
 }

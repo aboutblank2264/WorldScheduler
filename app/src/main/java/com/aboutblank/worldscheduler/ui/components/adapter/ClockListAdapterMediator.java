@@ -1,6 +1,5 @@
 package com.aboutblank.worldscheduler.ui.components.adapter;
 
-import android.app.TimePickerDialog;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -12,7 +11,11 @@ public interface ClockListAdapterMediator {
 
     String getOffSetString(@NonNull String timeZoneId);
 
-    TimePickerDialog.OnTimeSetListener getOnTimeSetListener();
+    void onDelete(int position);
+
+    void addNew(int position);
 
     PopupMenu getPopupMenu(View view);
+
+    String[] getTimeStrings(long savedTime);
 }

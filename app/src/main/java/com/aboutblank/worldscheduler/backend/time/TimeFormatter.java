@@ -25,7 +25,7 @@ public abstract class TimeFormatter {
     private final static String AHEAD = "hours ahead";
     private final static String BEHIND = "hours behind";
 
-    private final static String TIME_FORMAT = "HH:mm aa";
+    private final static String TIME_FORMAT = "hh:mm aa";
 
     private static String[] INVALID_STRINGS = {"Etc"};
 
@@ -102,11 +102,15 @@ public abstract class TimeFormatter {
                 (hoursDifference > 0 ? AHEAD : BEHIND);
     }
 
-    public static String toClockTime(long millisOfDay) {
-        return LocalTime.fromMillisOfDay(millisOfDay).toString(TIME_FORMAT);
-    }
-
     public static long toMillisOfDay(int hour, int minute) {
         return new LocalTime(hour, hour).getMillisOfDay();
+    }
+
+    public static long toMillisOfTimeZone(long millisOfDay, String timeZoneId) {
+        return new LocalTime(millisOfDay).toDateTimeToday(DateTimeZone.forID(timeZoneId)).getMillisOfDay();
+    }
+
+    public static String toClockString(long millisOfDay) {
+        return LocalTime.fromMillisOfDay(millisOfDay).toString(TIME_FORMAT);
     }
 }

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,6 +49,9 @@ public class Clock {
     }
 
     public void addSavedTime(long savedTime) {
+        if(savedTimes == null) {
+            savedTimes = new ArrayList<>();
+        }
         savedTimes.add(savedTime);
     }
 

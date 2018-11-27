@@ -1,6 +1,7 @@
 package com.aboutblank.worldscheduler.viewmodels;
 
 import android.arch.core.util.Function;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -11,7 +12,7 @@ import android.support.annotation.Nullable;
 
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.ui.screens.ClockPickerFragment;
+import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
 import com.aboutblank.worldscheduler.ui.screenstates.State;
 
@@ -65,8 +66,20 @@ public class ClockListViewModel extends BaseViewModel {
         return joinedScreenState;
     }
 
+    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<ClockListScreenState> observer) {
+        joinedScreenState.observe(owner, observer);
+    }
+
+    public void removeObservers(@NonNull LifecycleOwner owner) {
+        joinedScreenState.removeObservers(owner);
+    }
+
     public String getLocalTimeZone() {
         return getDataService().getLocalClock().getTimeZoneId();
+    }
+
+    public long toMillisOfDay(int hour, int minute) {
+        return getDataService().toMillisofDay(hour, minute);
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
@@ -74,7 +87,7 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     public void onFabClick() {
-        getFragmentManager().changeFragmentView(new ClockPickerFragment(), true);
+        getFragmentManager().changeToPickerFragment(true);
     }
 
     public void onDelete(@NonNull final Clock clock) {
@@ -86,13 +99,30 @@ public class ClockListViewModel extends BaseViewModel {
         });
     }
 
-    public void onAddTime(@NonNull final Clock clock, final int hour, final int minute) {
+    public void addTimeAndSave(@NonNull final Clock clock, int hour, int minute) {
+        long millisOfDay = toMillisOfDay(hour, minute);
+        clock.addSavedTime(millisOfDay);
+        addUpdateClock(clock);
+    }
+
+    private void addUpdateClock(@NonNull final Clock clock) {
         getThreadManager().execute(new Runnable() {
             @Override
             public void run() {
-                clock.addSavedTime(getDataService().toMillisofDay(hour, minute));
                 getDataService().updateClock(clock);
             }
         });
+    }
+
+    public String[] getTimeStrings(final long savedTime, @NonNull final String timeZoneId) {
+        String[] res = new String[2];
+        res[0] = TimeFormatter.toClockString(savedTime);
+        res[1] = TimeFormatter.toClockString(TimeFormatter.toMillisOfTimeZone(savedTime, timeZoneId));
+        return res;
+    }
+
+    public void deleteSavedTime(@NonNull Clock clock, int position) {
+        clock.getSavedTimes().remove(position);
+        addUpdateClock(clock);
     }
 }

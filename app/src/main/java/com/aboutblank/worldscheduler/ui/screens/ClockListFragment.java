@@ -73,13 +73,13 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @Override
     public void onStart() {
         super.onStart();
-        viewModel.getScreenState().observe(this, observer);
+        viewModel.observe(this, observer);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        viewModel.getScreenState().removeObservers(this);
+        viewModel.removeObservers(this);
     }
 
     private void initializeRecyclerView() {
@@ -151,7 +151,8 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
             @Override
             public void onClick(final View v) {
                 currentExpandedPosition =
-                        (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ? -1 : recyclerView.getChildAdapterPosition(v);
+                        (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ?
+                                -1 : recyclerView.getChildAdapterPosition(v);
                 Log.d(LOG, "OnClick " + currentExpandedPosition);
                 TransitionManager.beginDelayedTransition(recyclerView);
                 recyclerView.getAdapter().notifyDataSetChanged();
@@ -164,18 +165,35 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return viewModel.getOffSetString(timeZoneId);
     }
 
-    @Override
-    public TimePickerDialog.OnTimeSetListener getOnTimeSetListener() {
+    private TimePickerDialog.OnTimeSetListener getOnTimeSetListener(final int position) {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(final TimePicker view, final int hourOfDay, final int minute) {
-
+            public void onTimeSet(final TimePicker view, final int hour, final int minute) {
+                viewModel.addTimeAndSave(clocks.get(position), hour, minute);
+                //TODO add listener to respond to this instead of calling explicitly.
             }
         };
     }
 
     @Override
+    public void onDelete(final int position) {
+        viewModel.onDelete(clocks.get(position));
+        //TODO add a listener so that UI can respond smoothly.
+    }
+
+    @Override
+    public void addNew(final int position) {
+        new TimePickerDialog(requireContext(), getOnTimeSetListener(position), 0, 0, false)
+                .show();
+    }
+
+    @Override
     public PopupMenu getPopupMenu(View view) {
         return new PopupMenu(requireContext(), view);
+    }
+
+    @Override
+    public String[] getTimeStrings(final long savedTime) {
+        return viewModel.getTimeStrings(savedTime, clocks.get(currentExpandedPosition).getTimeZoneId());
     }
 }

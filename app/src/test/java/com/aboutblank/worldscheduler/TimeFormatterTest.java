@@ -120,4 +120,14 @@ public class TimeFormatterTest {
         String la_honolulu = TimeFormatter.getTimeDifferenceWithTime(la, honolulu, LA_DaylightSavingsOff);
         assertEquals(la_honolulu, "2 hours ahead");
     }
+
+    @Test
+    public void millisToTimeTest() {
+        assertEquals(TimeFormatter.toClockString(0), "00:00 AM");
+        assertEquals(TimeFormatter.toMillisOfDay(0,0), 0);
+
+        long zeroToTaipei = TimeFormatter.toMillisOfTimeZone(0, taipei);
+        assertEquals(zeroToTaipei, 57600000);
+
+    }
 }

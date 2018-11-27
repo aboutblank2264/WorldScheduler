@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.ui.screens.ClockPickerFragment;
 
 public class MainFragmentManager {
     private FragmentManager manager;
@@ -32,6 +33,10 @@ public class MainFragmentManager {
             transaction.addToBackStack(fragment.getClass().getSimpleName());
         }
         transaction.commit();
+    }
+
+    public void changeToPickerFragment(boolean backStack) {
+        changeFragmentView(new ClockPickerFragment(), backStack);
     }
 
     public void finishCurrentFragment() {

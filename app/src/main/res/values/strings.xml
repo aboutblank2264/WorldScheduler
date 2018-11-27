@@ -16,4 +16,5 @@
     <string name = "time_picker_dialog_name">Choose time</string>
     <string name = "time_dialog_from">Current</string>
     <string name = "time_dialog_to">Target</string>
+    <string name = "ellipses">⋮</string>
 </resources>
