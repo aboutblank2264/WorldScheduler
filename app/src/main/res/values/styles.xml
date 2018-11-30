@@ -27,7 +27,7 @@
     </style>
 
     <style name = "AppTheme.TextAppearance.EditTextBar">
-        <item name = "android:textColorHint">?android:attr/textColorSecondary</item>
+        <item name = "android:textColorHint">@color/secondaryAccentColor</item>
         <item name = "android:textSize">@dimen/sub_text_size</item>
     </style>
 
