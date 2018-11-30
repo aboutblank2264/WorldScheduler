@@ -22,15 +22,19 @@ public interface DataService {
 
     void saveClockWithId(String timeZoneId);
 
-    void updateClock(@NonNull Clock clock);
-
     void deleteClock(String timeZoneId);
-
-    void deleteClock(@NonNull Clock clock);
 
     Clock getLocalClock();
 
     String getTimeDifference(String timeZoneId);
 
-    long toMillisofDay(int hour, int minute);
+    long toMillisOfDay(int hour, int minute);
+
+    void addSavedTimeToClock(@NonNull String timeZoneId, long millisOfDay);
+
+    void addSavedTimeToClock(@NonNull String timeZoneId, int hour, int minute);
+
+    void deleteSavedTimeFromClock(@NonNull String timeZoneId, int position);
+
+    String[] getFormattedTimeStrings(@NonNull String timeZoneId, long savedTime);
 }

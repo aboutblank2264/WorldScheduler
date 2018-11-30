@@ -1,5 +1,6 @@
 package com.aboutblank.worldscheduler.viewmodels;
 
+import android.annotation.SuppressLint;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
@@ -12,16 +13,16 @@ import android.support.annotation.Nullable;
 
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
-import com.aboutblank.worldscheduler.ui.screenstates.State;
+import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState.ClockListState;
+import com.aboutblank.worldscheduler.viewmodels.events.ClockListEvent;
 
 import java.util.List;
 
 public class ClockListViewModel extends BaseViewModel {
     private final static String LOG = ClockListViewModel.class.getSimpleName();
-    private MutableLiveData<ClockListScreenState> viewModelScreenState;
 
+    private MutableLiveData<ClockListScreenState> viewModelScreenState;
     private MediatorLiveData<ClockListScreenState> joinedScreenState;
 
     ClockListViewModel(WorldApplication application) {
@@ -33,14 +34,16 @@ public class ClockListViewModel extends BaseViewModel {
         debug(LOG, "initializing");
 
         viewModelScreenState = new MutableLiveData<>();
-        viewModelScreenState.setValue(new ClockListScreenState(State.LOADING));
+        viewModelScreenState.setValue(new ClockListScreenState(ClockListState.LOADING));
 
-        LiveData<ClockListScreenState> dataSourceScreenState = Transformations.map(getDataService().getAllClocksLive(), new Function<List<Clock>, ClockListScreenState>() {
-            @Override
-            public ClockListScreenState apply(final List<Clock> input) {
-                return new ClockListScreenState(State.DONE, input);
-            }
-        });
+        //Transformer to get the LiveData list of clocks from data service.
+        LiveData<ClockListScreenState> dataSourceScreenState =
+                Transformations.map(getDataService().getAllClocksLive(), new Function<List<Clock>, ClockListScreenState>() {
+                    @Override
+                    public ClockListScreenState apply(final List<Clock> input) {
+                        return new ClockListScreenState(ClockListState.CLOCKS, input);
+                    }
+                });
 
         Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
             @Override
@@ -49,21 +52,12 @@ public class ClockListViewModel extends BaseViewModel {
             }
         };
 
+        //Joining both Data Service LiveData and events returned from user actions.
         joinedScreenState = new MediatorLiveData<>();
         joinedScreenState.addSource(viewModelScreenState, observer);
         joinedScreenState.addSource(dataSourceScreenState, observer);
-    }
 
-    private void onError(Throwable throwable) {
-        viewModelScreenState.postValue(new ClockListScreenState(State.ERROR, throwable));
-    }
-
-    public void onAddDialog() {
-        viewModelScreenState.postValue(new ClockListScreenState(State.DIALOG));
-    }
-
-    public LiveData<ClockListScreenState> getScreenState() {
-        return joinedScreenState;
+        debug(LOG, "initialize done");
     }
 
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<ClockListScreenState> observer) {
@@ -74,55 +68,128 @@ public class ClockListViewModel extends BaseViewModel {
         joinedScreenState.removeObservers(owner);
     }
 
-    public String getLocalTimeZone() {
-        return getDataService().getLocalClock().getTimeZoneId();
+    public void consumeEvent(ClockListEvent event) {
+        debug(LOG, event.toString());
+        switch (event.getEvent()) {
+            case LOAD_CLOCKS:
+                break;
+            case DELETE_CLOCK:
+                onDelete(event.getTimezoneId());
+                break;
+            case ADD_SAVED_TIME:
+                addSavedTimeToClock(event.getTimezoneId(), event.getHour(), event.getMinute());
+                break;
+            case DELETE_SAVED_TIME:
+                deleteSavedTime(event.getTimezoneId(), event.getSavedTimePosition());
+                break;
+            case GET_MILLIS_OF_DAY:
+                postMillisOfDay(event.getHour(), event.getMinute());
+                break;
+            case GET_LOCAL_TIMEZONE:
+                postLocalTimeZone();
+                break;
+//            case GET_OFFSET_STRING:
+//                postOffSetString(event.getTimezoneId());
+//                break;
+//            case GET_FORMATTED_TIME_STRINGS:
+//                postFormattedTimeStrings(event.getTimezoneId(), event.getSavedTimePosition());
+//                break;
+            case FAB_CLICK:
+                onFabClick();
+                break;
+            case ADD_ALARM:
+                addAlarm(event.getHour(), event.getMinute());
+                break;
+        }
     }
 
-    public long toMillisOfDay(int hour, int minute) {
-        return getDataService().toMillisofDay(hour, minute);
+    private void postValue(ClockListScreenState screenState) {
+        viewModelScreenState.postValue(screenState);
+    }
+
+    private void postError(Throwable throwable) {
+        postValue(new ClockListScreenState(ClockListState.ERROR, throwable));
+    }
+
+    private void postLocalTimeZone() {
+        postValue(new ClockListScreenState(ClockListState.LOCAL_TIMEZONE,
+                getDataService().getLocalClock().getTimeZoneId()));
+    }
+
+    private void postMillisOfDay(int hour, int minute) {
+        postValue(new ClockListScreenState(ClockListState.MILLIS_OF_DAY,
+                getDataService().toMillisOfDay(hour, minute)));
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
+//        if(timeZoneId == null) {
+//            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+//        } else {
+//            postValue(new ClockListScreenState(ClockListState.OFFSET_STRING,
+//                    getDataService().getTimeDifference(timeZoneId)));
+//        }
         return getDataService().getTimeDifference(timeZoneId);
     }
 
-    public void onFabClick() {
+    private void onFabClick() {
         getFragmentManager().changeToPickerFragment(true);
     }
 
-    public void onDelete(@NonNull final Clock clock) {
-        getThreadManager().execute(new Runnable() {
-            @Override
-            public void run() {
-                getDataService().deleteClock(clock);
-            }
-        });
+    private void onDelete(final String timeZoneId) {
+        if (timeZoneId == null) {
+            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+        } else {
+            getThreadManager().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getDataService().deleteClock(timeZoneId);
+                }
+            });
+        }
     }
 
-    public void addTimeAndSave(@NonNull final Clock clock, int hour, int minute) {
-        long millisOfDay = toMillisOfDay(hour, minute);
-        clock.addSavedTime(millisOfDay);
-        addUpdateClock(clock);
+    @SuppressLint("DefaultLocale")
+    private void addSavedTimeToClock(final String timeZoneId, final int hour, final int minute) {
+        debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d", timeZoneId, hour, minute));
+
+        if (timeZoneId == null) {
+            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+        } else {
+            getThreadManager().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getDataService().addSavedTimeToClock(timeZoneId, hour, minute);
+                    postValue(new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME));
+                }
+            });
+        }
     }
 
-    private void addUpdateClock(@NonNull final Clock clock) {
-        getThreadManager().execute(new Runnable() {
-            @Override
-            public void run() {
-                getDataService().updateClock(clock);
-            }
-        });
+    public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
+//        if(timeZoneId == null) {
+//            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+//        } else {
+//            postValue(new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS,
+//                    getDataService().getFormattedTimeStrings(timeZoneId, savedTime)));
+//        }
+
+        return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
     }
 
-    public String[] getTimeStrings(final long savedTime, @NonNull final String timeZoneId) {
-        String[] res = new String[2];
-        res[0] = TimeFormatter.toClockString(savedTime);
-        res[1] = TimeFormatter.toClockString(TimeFormatter.toMillisOfTimeZone(savedTime, timeZoneId));
-        return res;
+    private void deleteSavedTime(final String timeZoneId, final int position) {
+        if (timeZoneId == null) {
+            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+        } else {
+            getThreadManager().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getDataService().deleteSavedTimeFromClock(timeZoneId, position);
+                }
+            });
+        }
     }
 
-    public void deleteSavedTime(@NonNull Clock clock, int position) {
-        clock.getSavedTimes().remove(position);
-        addUpdateClock(clock);
+    private void addAlarm(final int hour, final int minutes) {
+        getFragmentManager().addAlarm(hour, minutes);
     }
 }

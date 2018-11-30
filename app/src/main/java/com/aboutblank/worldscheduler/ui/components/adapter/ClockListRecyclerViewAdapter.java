@@ -26,13 +26,11 @@ import butterknife.ButterKnife;
 public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockListRecyclerViewAdapter.ClockListHolder> {
     private final static String LOG = ClockListRecyclerViewAdapter.class.getSimpleName();
 
-    private List<Clock> clocks;
     private ClockListAdapterMediator adapterMediator;
 
     private RecyclerView.RecycledViewPool recycledViewPool;
 
     public ClockListRecyclerViewAdapter(ClockListAdapterMediator adapterMediator) {
-        this.clocks = new ArrayList<>();
         this.adapterMediator = adapterMediator;
     }
 
@@ -51,22 +49,16 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
-        Clock clock = clocks.get(position);
+        Clock clock = adapterMediator.getClockAt(position);
         holder.setClockInfo(clock);
         holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);
 
         holder.setOnClickListener(adapterMediator.getOnClickListener());
     }
 
-    public void update(List<Clock> newClocks) {
-        clocks.clear();
-        clocks.addAll(newClocks);
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
-        return clocks.size();
+        return adapterMediator.getClockCount();
     }
 
     class ClockListHolder extends RecyclerView.ViewHolder {
@@ -105,6 +97,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setClockInfo(@NonNull Clock clock) {
+            Log.d(LOG, clock.toString());
             savedTimes = clock.getSavedTimes() == null ? new ArrayList<Long>() : clock.getSavedTimes();
 
             timeZone.setText(clock.getName());

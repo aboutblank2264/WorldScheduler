@@ -4,7 +4,13 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.aboutblank.worldscheduler.backend.room.Clock;
+
 public interface ClockListAdapterMediator {
+    Clock getClockAt(int position);
+
+    int getClockCount();
+
     int getCurrentExpandedPosition();
 
     View.OnClickListener getOnClickListener();

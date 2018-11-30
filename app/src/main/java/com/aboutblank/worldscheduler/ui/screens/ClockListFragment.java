@@ -3,7 +3,6 @@ package com.aboutblank.worldscheduler.ui.screens;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -26,7 +25,10 @@ import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerView
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockListViewModel;
 import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
+import com.aboutblank.worldscheduler.viewmodels.events.ClockListEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,7 +49,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     private ClockListViewModel viewModel;
     private int currentExpandedPosition = -1;
-    private List<Clock> clocks;
+    private List<Clock> clocks = new ArrayList<>();
 
     private Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
         @Override
@@ -62,8 +64,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         viewModel = ViewModelFactory.getClockListViewModel(this);
-
-        mainClock.setTimeZone(viewModel.getLocalTimeZone());
 
         initializeRecyclerView();
 
@@ -90,24 +90,40 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     public void onStateChanged(final ClockListScreenState screenState) {
-        Log.d(LOG, "State Received: " + screenState.toString());
-        Log.d(LOG, String.valueOf(Looper.getMainLooper() == Looper.myLooper()));
+        Log.d(LOG, "ClockListState Received: " + screenState.toString());
         switch (screenState.getState()) {
             case LOADING:
                 showProgressBar();
                 break;
-            case DONE:
+            case CLOCKS:
                 onClocksReceived(screenState.getClocks());
                 break;
             case ERROR:
                 onError(screenState.getThrowable());
+                break;
+            case LOCAL_TIMEZONE:
+                mainClock.setTimeZone(screenState.getTimeZoneId());
+                break;
+            case MILLIS_OF_DAY:
+
+                break;
+            case OFFSET_STRING:
+                break;
+            case FORMAT_TIME_STRINGS:
+                break;
+            case ADD_NEW_SAVED_TIME:
+
+                break;
+            case DELETE_CLOCK:
+                break;
+            case DELETE_TIME:
                 break;
         }
     }
 
     private void onClocksReceived(List<Clock> clocks) {
         this.clocks = clocks;
-        clockListAdapter.update(clocks);
+        clockListAdapter.notifyDataSetChanged();
         hideProgressBar();
     }
 
@@ -128,7 +144,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     @OnClick(R.id.list_new_fab)
     public void onNewClockClicked() {
-        viewModel.onFabClick();
+        postEvent(new ClockListEvent(ClockListEvent.Event.FAB_CLICK));
     }
 
     @Override
@@ -141,8 +157,25 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     /*------------------------------------------------------------------*/
 
     @Override
+    public Clock getClockAt(final int position) {
+        return clocks.get(position);
+    }
+
+    @Override
+    public int getClockCount() {
+        return clocks.size();
+    }
+
+    @Override
     public int getCurrentExpandedPosition() {
         return currentExpandedPosition;
+    }
+
+    private void expandClockView(int position, boolean overridePrevious) {
+        Log.d(LOG, "OnClick " + currentExpandedPosition);
+        currentExpandedPosition = (currentExpandedPosition == position && overridePrevious) ? -1 : position;
+        TransitionManager.beginDelayedTransition(recyclerView);
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -150,12 +183,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                currentExpandedPosition =
-                        (currentExpandedPosition == recyclerView.getChildAdapterPosition(v)) ?
-                                -1 : recyclerView.getChildAdapterPosition(v);
-                Log.d(LOG, "OnClick " + currentExpandedPosition);
-                TransitionManager.beginDelayedTransition(recyclerView);
-                recyclerView.getAdapter().notifyDataSetChanged();
+                ClockListFragment.this.expandClockView(recyclerView.getChildAdapterPosition(v), true);
             }
         };
     }
@@ -169,16 +197,15 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(final TimePicker view, final int hour, final int minute) {
-                viewModel.addTimeAndSave(clocks.get(position), hour, minute);
-                //TODO add listener to respond to this instead of calling explicitly.
+                postEvent(new ClockListEvent(ClockListEvent.Event.ADD_SAVED_TIME,
+                        clocks.get(position).getTimeZoneId(), hour, minute));
             }
         };
     }
 
     @Override
     public void onDelete(final int position) {
-        viewModel.onDelete(clocks.get(position));
-        //TODO add a listener so that UI can respond smoothly.
+        postEvent(new ClockListEvent(ClockListEvent.Event.DELETE_CLOCK, clocks.get(position).getTimeZoneId()));
     }
 
     @Override
@@ -194,6 +221,12 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     @Override
     public String[] getTimeStrings(final long savedTime) {
-        return viewModel.getTimeStrings(savedTime, clocks.get(currentExpandedPosition).getTimeZoneId());
+        Log.d(LOG, Arrays.toString(viewModel.getFormattedTimeStrings(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTime)));
+
+        return viewModel.getFormattedTimeStrings(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTime);
+    }
+
+    private void postEvent(ClockListEvent event) {
+        viewModel.consumeEvent(event);
     }
 }

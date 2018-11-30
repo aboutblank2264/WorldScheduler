@@ -69,18 +69,8 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void updateClock(@NonNull Clock clock) {
-        clockDao.insertClock(clock);
-    }
-
-    @Override
     public void deleteClock(String timeZoneId) {
         clockDao.deleteClock(timeZoneId);
-    }
-
-    @Override
-    public void deleteClock(@NonNull final Clock clock) {
-        clockDao.deleteClock(clock);
     }
 
     @Override
@@ -94,7 +84,35 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public long toMillisofDay(int hour, int minute) {
+    public long toMillisOfDay(int hour, int minute) {
         return TimeFormatter.toMillisOfDay(hour, minute);
+    }
+
+    @Override
+    public void addSavedTimeToClock(@NonNull final String timeZoneId, long millisOfDay) {
+        Clock clock = clockDao.getClockById(timeZoneId);
+        clock.addSavedTime(millisOfDay);
+        clockDao.update(clock);
+    }
+
+    @Override
+    public void addSavedTimeToClock(@NonNull final String timeZoneId, int hour, int minute) {
+        addSavedTimeToClock(timeZoneId, toMillisOfDay(hour, minute));
+    }
+
+    @Override
+    public void deleteSavedTimeFromClock(@NonNull final String timeZoneId, int position) {
+        Clock clock = clockDao.getClockById(timeZoneId);
+        clock.getSavedTimes().remove(position);
+        clockDao.update(clock);
+    }
+
+    @Override
+    public String[] getFormattedTimeStrings(@NonNull final String timeZoneId, final long savedTime) {
+        String[] res = new String[2];
+        res[0] = TimeFormatter.toClockString(savedTime);
+        res[1] = TimeFormatter.toClockString(TimeFormatter.toMillisOfTimeZone(savedTime, timeZoneId));
+
+        return  res;
     }
 }

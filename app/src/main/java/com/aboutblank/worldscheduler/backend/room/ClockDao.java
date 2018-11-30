@@ -6,7 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.support.annotation.NonNull;
+import android.arch.persistence.room.Update;
 
 import java.util.List;
 
@@ -20,11 +20,17 @@ public interface ClockDao {
     LiveData<List<Clock>> getAllClocksLive();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertClock(@NonNull Clock clock);
+    void insertClock(Clock clock);
+
+    @Update
+    void update(Clock clock);
 
     @Query("DELETE from Clock where timeZoneId = :timeZoneId")
     void deleteClock(String timeZoneId);
 
+    @Query("DELETE from Clock where id = :id")
+    void deleteClock(int id);
+
     @Delete
-    void deleteClock(@NonNull Clock clock);
+    void deleteClock(Clock clock);
 }

@@ -5,10 +5,11 @@
         <!-- Customize your theme here. -->
         <item name = "colorPrimary">@color/primaryColor</item>
         <item name = "colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name = "colorAccent">@color/primaryDarkColor</item>
-        <item name = "android:colorBackground">@color/primaryLightColor</item>
-        <item name = "android:textColor">@color/primaryTextColor</item>
-        <item name = "android:textColorHint">@color/primaryLightColor</item>
+        <item name = "colorAccent">@color/primaryAccentColor</item>
+        <item name = "android:divider">@color/secondaryAccentColor</item>
+        <item name = "android:textColorPrimary">@color/primaryTextColor</item>
+        <item name = "android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name = "android:dropDownListViewStyle">@style/AppTheme.TextAppearance.DropDown</item>
     </style>
 
     <style name = "AppTheme.NoActionBar">
@@ -16,8 +17,24 @@
         <item name = "windowNoTitle">true</item>
     </style>
 
-    <style name = "AppTheme.AppBarOverlay" parent = "ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name = "AppTheme.TextAppearance">
+        <item name = "android:textColor">?android:attr/textColorPrimary</item>
+        <item name = "android:textSize">@dimen/header_text_size</item>
+    </style>
 
-    <style name = "AppTheme.PopupOverlay" parent = "ThemeOverlay.AppCompat.Light" />
+    <style name = "AppTheme.TextAppearance.SubText">
+        <item name = "android:textSize">@dimen/sub_text_size</item>
+    </style>
 
+    <style name = "AppTheme.TextAppearance.EditTextBar">
+        <item name = "android:textColorHint">?android:attr/textColorSecondary</item>
+        <item name = "android:textSize">@dimen/sub_text_size</item>
+    </style>
+
+    <style name = "AppTheme.TextAppearance.DropDown">
+        <item name = "android:textColor">?android:attr/textColorSecondary</item>
+        <!--<item name = "android:divider">?attr/colorAccentSecondary</item>-->
+        <item name = "android:dividerHeight">1dp</item>
+        <item name = "android:textSize">@dimen/drop_down_text_size</item>
+    </style>
 </resources>

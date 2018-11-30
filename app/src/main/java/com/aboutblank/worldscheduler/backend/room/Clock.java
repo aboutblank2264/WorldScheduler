@@ -69,6 +69,7 @@ public class Clock {
         return "Clock { " +
                 "id = " + id +
                 ", timeZoneId = '" + timeZoneId + '\'' +
+                ", savedTimes = " + savedTimes +
                 '}';
     }
 

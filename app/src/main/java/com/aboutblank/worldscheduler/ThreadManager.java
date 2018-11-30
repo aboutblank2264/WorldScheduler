@@ -7,9 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ThreadManager {
-    private final static int THREAD_POOl = 2;
-
-    private ExecutorService backendThread = Executors.newFixedThreadPool(THREAD_POOl);
+    private ExecutorService backendThread = Executors.newSingleThreadExecutor();
     private Handler mainThread = new Handler(Looper.getMainLooper());
 
     public void execute(Runnable runnable) {
