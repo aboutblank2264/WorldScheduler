@@ -30,8 +30,8 @@ public class SimpleDateClock extends ConstraintLayout {
     }
 
     private void initialize(Context context) {
-        View root = inflate(context, R.layout.simple_clock_layout, this);
-        ButterKnife.bind(root);
+        View view = inflate(context, R.layout.simple_clock_layout, this);
+        ButterKnife.bind(view);
 
         main.setFormat12Hour(context.getString(R.string.default_clock_format_12hr));
         date.setFormat12Hour(context.getString(R.string.default_date_format));

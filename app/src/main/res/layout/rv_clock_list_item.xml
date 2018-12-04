@@ -11,31 +11,21 @@
     >
 
     <TextView
-        android:id = "@+id/item_menu"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:padding = "8dp"
-        android:text = "@string/ellipses"
-        app:layout_constraintEnd_toEndOf = "parent"
-        app:layout_constraintTop_toTopOf = "parent"
-        />
-
-    <TextView
         android:id = "@+id/item_timezone"
+        style = "@style/AppTheme.TextAppearance"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
         app:layout_constraintStart_toStartOf = "parent"
         app:layout_constraintTop_toTopOf = "parent"
-        style="@style/AppTheme.TextAppearance"
         />
 
     <TextView
         android:id = "@+id/item_compare"
+        style = "@style/AppTheme.TextAppearance.SubText"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
         app:layout_constraintStart_toStartOf = "@id/item_timezone"
         app:layout_constraintTop_toBottomOf = "@id/item_timezone"
-        style="@style/AppTheme.TextAppearance.SubText"
         />
 
     <com.aboutblank.worldscheduler.ui.components.SimpleDateClock
@@ -43,7 +33,7 @@
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
         app:layout_constraintBottom_toBottomOf = "@id/item_compare"
-        app:layout_constraintEnd_toStartOf = "@id/item_menu"
+        app:layout_constraintEnd_toEndOf = "parent"
         app:layout_constraintTop_toTopOf = "@id/item_timezone"
         />
 
@@ -52,7 +42,16 @@
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         android:visibility = "gone"
-        app:layout_constraintBottom_toBottomOf = "parent"
+        app:layout_constraintBottom_toTopOf = "@id/item_clock_options"
         app:layout_constraintTop_toBottomOf = "@id/item_compare"
+        />
+
+    <com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons
+        android:id = "@+id/item_clock_options"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        app:layout_constraintBottom_toBottomOf = "parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf = "@id/item_saved_time_rv"
         />
 </android.support.constraint.ConstraintLayout>

@@ -3,6 +3,8 @@
     xmlns:tools = "http://schemas.android.com/tools"
     package = "com.aboutblank.worldscheduler">
 
+    <uses-permission android:name = "com.android.alarm.permission.SET_ALARM" />
+
     <application
         android:name = ".WorldApplication"
         android:allowBackup = "true"
@@ -18,10 +20,10 @@
             android:theme = "@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name = "android.intent.action.MAIN" />
-
                 <category android:name = "android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

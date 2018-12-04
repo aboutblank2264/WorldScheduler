@@ -10,6 +10,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
@@ -98,7 +99,7 @@ public class ClockListViewModel extends BaseViewModel {
                 onFabClick();
                 break;
             case ADD_ALARM:
-                addAlarm(event.getHour(), event.getMinute());
+                addAlarm(event.getTimestring(), event.getTag());
                 break;
         }
     }
@@ -122,12 +123,6 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
-//        if(timeZoneId == null) {
-//            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
-//        } else {
-//            postValue(new ClockListScreenState(ClockListState.OFFSET_STRING,
-//                    getDataService().getTimeDifference(timeZoneId)));
-//        }
         return getDataService().getTimeDifference(timeZoneId);
     }
 
@@ -166,14 +161,11 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
-//        if(timeZoneId == null) {
-//            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
-//        } else {
-//            postValue(new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS,
-//                    getDataService().getFormattedTimeStrings(timeZoneId, savedTime)));
-//        }
-
         return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
+    }
+
+    public long toMillisFromTimeString(final String timeString) {
+        return getDataService().getMillisFromTimeString(timeString);
     }
 
     private void deleteSavedTime(final String timeZoneId, final int position) {
@@ -189,7 +181,14 @@ public class ClockListViewModel extends BaseViewModel {
         }
     }
 
-    private void addAlarm(final int hour, final int minutes) {
-        getFragmentManager().addAlarm(hour, minutes);
+    private void addAlarm(final String timeString, final String tag) {
+        long millis = getDataService().getMillisFromTimeString(timeString);
+
+        getFragmentManager().addAlarm(tag, getDataService().getHourOfDay(millis),
+                getDataService().getMinuteOfHour(millis));
+    }
+
+    public void showDialog(DialogFragment dialogFragment, String tag) {
+        getFragmentManager().showDialog(dialogFragment, tag);
     }
 }

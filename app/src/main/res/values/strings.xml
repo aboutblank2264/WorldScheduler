@@ -17,4 +17,5 @@
     <string name = "time_dialog_from">Current</string>
     <string name = "time_dialog_to">Target</string>
     <string name = "ellipses">⋮</string>
+    <string name = "tag_hint">Set tag for alarm</string>
 </resources>

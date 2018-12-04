@@ -37,4 +37,10 @@ public interface DataService {
     void deleteSavedTimeFromClock(@NonNull String timeZoneId, int position);
 
     String[] getFormattedTimeStrings(@NonNull String timeZoneId, long savedTime);
+
+    long getMillisFromTimeString(@NonNull String timeString);
+
+    int getHourOfDay(long millis);
+
+    int getMinuteOfHour(long millis);
 }

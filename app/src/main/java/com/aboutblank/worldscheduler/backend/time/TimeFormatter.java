@@ -8,6 +8,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,8 @@ public abstract class TimeFormatter {
     private final static String BEHIND = "hours behind";
 
     private final static String TIME_FORMAT = "hh:mm aa";
+
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(TIME_FORMAT);
 
     private static String[] INVALID_STRINGS = {"Etc"};
 
@@ -103,7 +107,7 @@ public abstract class TimeFormatter {
     }
 
     public static long toMillisOfDay(int hour, int minute) {
-        return new LocalTime(hour, hour).getMillisOfDay();
+        return new LocalTime(hour, minute).getMillisOfDay();
     }
 
     public static long toMillisOfTimeZone(long millisOfDay, String timeZoneId) {
@@ -112,5 +116,17 @@ public abstract class TimeFormatter {
 
     public static String toClockString(long millisOfDay) {
         return LocalTime.fromMillisOfDay(millisOfDay).toString(TIME_FORMAT);
+    }
+
+    public static long toMillisFromString(String clockString) {
+        return LocalTime.parse(clockString, DATE_TIME_FORMATTER).getMillisOfDay();
+    }
+
+    public static int getHour(long millisOfDay) {
+        return LocalTime.fromMillisOfDay(millisOfDay).getHourOfDay();
+    }
+
+    public static int getMinute(long millisOfDay) {
+        return LocalTime.fromMillisOfDay(millisOfDay).getMinuteOfHour();
     }
 }

@@ -7,14 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
+import com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 
 import java.util.ArrayList;
@@ -28,16 +27,8 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     private ClockListAdapterMediator adapterMediator;
 
-    private RecyclerView.RecycledViewPool recycledViewPool;
-
     public ClockListRecyclerViewAdapter(ClockListAdapterMediator adapterMediator) {
         this.adapterMediator = adapterMediator;
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull final RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        recycledViewPool = recyclerView.getRecycledViewPool();
     }
 
     @NonNull
@@ -75,8 +66,8 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         @BindView(R.id.item_time)
         SimpleDateClock simpleDateClock;
 
-        @BindView(R.id.item_menu)
-        TextView menuButton;
+        @BindView(R.id.item_clock_options)
+        ClockActionOptionButtons clockActionOptionButtons;
 
         @BindView(R.id.item_saved_time_rv)
         RecyclerView savedTimeRecyclerView;
@@ -88,12 +79,12 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            setMenuButton();
-
             adapter = new ClockListDetailRecyclerViewAdapter(adapterMediator);
             savedTimeRecyclerView.setLayoutManager(
                     new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
             savedTimeRecyclerView.setAdapter(adapter);
+
+            setOptionButtonListeners();
         }
 
         void setClockInfo(@NonNull Clock clock) {
@@ -110,30 +101,20 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             layout.setOnClickListener(listener);
         }
 
-        void setMenuButton() {
-            menuButton.setOnClickListener(new View.OnClickListener() {
+        void setOptionButtonListeners() {
+            clockActionOptionButtons.setScheduleOnClick(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    PopupMenu popupMenu = adapterMediator.getPopupMenu(menuButton);
-                    popupMenu.inflate(R.menu.clock_list_side_menu);
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(final MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.add_new:
-                                    Log.d(LOG, "Add New");
-                                    adapterMediator.addNew(ClockListHolder.this.getAdapterPosition());
-                                    break;
-                                case R.id.delete:
-                                    Log.d(LOG, "Delete");
-                                    adapterMediator.onDelete(ClockListHolder.this.getAdapterPosition());
-                                    break;
-                            }
-                            return false;
-                        }
-                    });
+                    Log.d(LOG, "Add New");
+                    adapterMediator.addNewSavedTime(ClockListHolder.this.getAdapterPosition());
+                }
+            });
 
-                    popupMenu.show();
+            clockActionOptionButtons.setDeleteOnClick(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    Log.d(LOG, "Delete");
+                    adapterMediator.deleteClock(ClockListHolder.this.getAdapterPosition());
                 }
             });
         }
@@ -141,12 +122,17 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         void setExpanded(boolean activated) {
             if (savedTimes.size() > 0) {
                 Log.d(LOG, String.valueOf(activated));
-                savedTimeRecyclerView.setVisibility(activated ? View.VISIBLE : View.GONE);
+                setVisible(activated ? View.VISIBLE : View.GONE);
                 if (activated) {
                     Log.d(LOG, savedTimes.toString());
                     adapter.update(savedTimes);
                 }
             }
+        }
+
+        private void setVisible(int visible) {
+            savedTimeRecyclerView.setVisibility(visible);
+            clockActionOptionButtons.setVisibility(visible);
         }
 
         boolean isExpanded() {

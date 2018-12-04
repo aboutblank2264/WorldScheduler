@@ -13,13 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TimePicker;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.MainActivity;
+import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
+import com.aboutblank.worldscheduler.ui.components.TagDialog;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListAdapterMediator;
 import com.aboutblank.worldscheduler.ui.components.adapter.ClockListRecyclerViewAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
@@ -144,7 +145,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     @OnClick(R.id.list_new_fab)
     public void onNewClockClicked() {
-        postEvent(new ClockListEvent(ClockListEvent.Event.FAB_CLICK));
+        postEvent(ClockListEvent.fabClick());
     }
 
     @Override
@@ -197,26 +198,47 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(final TimePicker view, final int hour, final int minute) {
-                postEvent(new ClockListEvent(ClockListEvent.Event.ADD_SAVED_TIME,
-                        clocks.get(position).getTimeZoneId(), hour, minute));
+                postEvent(ClockListEvent.addSavedTime(clocks.get(position).getTimeZoneId(), hour, minute));
             }
         };
     }
 
     @Override
-    public void onDelete(final int position) {
-        postEvent(new ClockListEvent(ClockListEvent.Event.DELETE_CLOCK, clocks.get(position).getTimeZoneId()));
+    public void deleteClock(final int position) {
+        postEvent(ClockListEvent.deleteClock(clocks.get(position).getTimeZoneId()));
     }
 
     @Override
-    public void addNew(final int position) {
+    public void deleteSavedTime(final int savedTimePosition) {
+        postEvent(ClockListEvent.deleteSavedTime(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTimePosition));
+    }
+
+    @Override
+    public void addAlarm(final String timeString) {
+        TagDialog tagDialog = TagDialog.newInstance(new TagDialog.TagDialogListener() {
+            @Override
+            public void onPositiveClick(final TagDialog dialog, final String message) {
+                postEvent(ClockListEvent.addAlarm(timeString, message));
+            }
+
+            @Override
+            public void onNegativeClick(final TagDialog dialog) {
+                dialog.dismiss();
+            }
+        });
+
+        viewModel.showDialog(tagDialog, "Add Alarm");
+    }
+
+    @Override
+    public void addNewSavedTime(final int position) {
         new TimePickerDialog(requireContext(), getOnTimeSetListener(position), 0, 0, false)
                 .show();
     }
 
     @Override
-    public PopupMenu getPopupMenu(View view) {
-        return new PopupMenu(requireContext(), view);
+    public IconPopupMenu getPopupMenu(View view) {
+        return new IconPopupMenu(requireContext(), view);
     }
 
     @Override

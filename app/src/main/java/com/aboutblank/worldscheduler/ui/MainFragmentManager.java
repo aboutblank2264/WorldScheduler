@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -43,10 +44,15 @@ public class MainFragmentManager {
         manager.popBackStack();
     }
 
-    public void addAlarm(final int hour, final int minutes) {
+    public void showDialog(DialogFragment dialogFragment, String tag) {
+        dialogFragment.show(manager, tag);
+    }
+
+    public void addAlarm(final String tag, final int hour, final int minutes) {
         Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
         intent.putExtra(AlarmClock.EXTRA_HOUR, hour);
         intent.putExtra(AlarmClock.EXTRA_MINUTES, minutes);
+        intent.putExtra(AlarmClock.EXTRA_MESSAGE, tag);
         mainContext.startActivity(intent);
     }
 }

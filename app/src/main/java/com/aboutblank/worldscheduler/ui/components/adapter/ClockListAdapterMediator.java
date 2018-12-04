@@ -2,9 +2,9 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.PopupMenu;
 
 import com.aboutblank.worldscheduler.backend.room.Clock;
+import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
 
 public interface ClockListAdapterMediator {
     Clock getClockAt(int position);
@@ -17,11 +17,15 @@ public interface ClockListAdapterMediator {
 
     String getOffSetString(@NonNull String timeZoneId);
 
-    void onDelete(int position);
+    void addAlarm(String timeString);
 
-    void addNew(int position);
+    void addNewSavedTime(int position);
 
-    PopupMenu getPopupMenu(View view);
+    void deleteClock(int position);
+
+    void deleteSavedTime(int savedTimePosition);
+
+    IconPopupMenu getPopupMenu(View view);
 
     String[] getTimeStrings(long savedTime);
 }

@@ -33,8 +33,12 @@
 
     <style name = "AppTheme.TextAppearance.DropDown">
         <item name = "android:textColor">?android:attr/textColorSecondary</item>
-        <!--<item name = "android:divider">?attr/colorAccentSecondary</item>-->
         <item name = "android:dividerHeight">1dp</item>
         <item name = "android:textSize">@dimen/drop_down_text_size</item>
+    </style>
+
+
+    <style name = "AppTheme.IconAppearance">
+        <item name = "android:backgroundTint">?android:attr/colorPrimaryDark</item>
     </style>
 </resources>

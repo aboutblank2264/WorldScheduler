@@ -80,7 +80,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public String getTimeDifference(String timeZoneId) {
-       return TimeFormatter.getTimeDifference(timeZoneId);
+        return TimeFormatter.getTimeDifference(timeZoneId);
     }
 
     @Override
@@ -113,6 +113,21 @@ public class DataServiceImpl implements DataService {
         res[0] = TimeFormatter.toClockString(savedTime);
         res[1] = TimeFormatter.toClockString(TimeFormatter.toMillisOfTimeZone(savedTime, timeZoneId));
 
-        return  res;
+        return res;
+    }
+
+    @Override
+    public long getMillisFromTimeString(@NonNull String timeString) {
+        return TimeFormatter.toMillisFromString(timeString);
+    }
+
+    @Override
+    public int getHourOfDay(long millis) {
+        return TimeFormatter.getHour(millis);
+    }
+
+    @Override
+    public int getMinuteOfHour(long millis) {
+        return TimeFormatter.getMinute(millis);
     }
 }
