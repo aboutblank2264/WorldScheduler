@@ -7,6 +7,7 @@
     <EditText
         android:id = "@+id/dialog_edit_text"
         style = "@style/AppTheme.TextAppearance.EditTextBar"
+        android:inputType="textNoSuggestions"
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
         android:hint = "@string/tag_hint"

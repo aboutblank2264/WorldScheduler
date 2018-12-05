@@ -121,7 +121,6 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
         void setExpanded(boolean activated) {
             if (savedTimes.size() > 0) {
-                Log.d(LOG, String.valueOf(activated));
                 setVisible(activated ? View.VISIBLE : View.GONE);
                 if (activated) {
                     Log.d(LOG, savedTimes.toString());

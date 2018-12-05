@@ -2,6 +2,7 @@ package com.aboutblank.worldscheduler.ui;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public abstract class Keyboard {
@@ -12,10 +13,15 @@ public abstract class Keyboard {
     }
 
     public static void showKeyboard(Fragment fragment) {
-        getImm(fragment).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
+        getImm(fragment).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     public static void hideKeyboard(Fragment fragment) {
         getImm(fragment).hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        ((InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(new View(activity).getWindowToken(), 0);
     }
 }

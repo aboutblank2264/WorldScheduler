@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
+        Keyboard.hideKeyboard(this);
+
         initializeToolbars();
 
         Log.d(LOG, "Setting application FragmentManager");
