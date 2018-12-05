@@ -5,11 +5,11 @@
     >
 
     <EditText
-        android:id="@+id/dialog_edit_text"
+        android:id = "@+id/dialog_edit_text"
+        style = "@style/AppTheme.TextAppearance.EditTextBar"
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
-        android:hint="@string/tag_hint"
-        style="@style/AppTheme.TextAppearance.EditTextBar"
+        android:hint = "@string/tag_hint"
         />
 
 </android.support.constraint.ConstraintLayout>

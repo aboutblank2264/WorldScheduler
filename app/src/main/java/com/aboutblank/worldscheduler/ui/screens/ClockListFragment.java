@@ -2,6 +2,7 @@ package com.aboutblank.worldscheduler.ui.screens;
 
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.transition.TransitionManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,6 +221,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
             @Override
             public void onPositiveClick(final TagDialog dialog, final String message) {
                 postEvent(ClockListEvent.addAlarm(timeString, message));
+                dialog.dismiss();
             }
 
             @Override
@@ -238,7 +241,8 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     @Override
     public IconPopupMenu getPopupMenu(View view) {
-        return new IconPopupMenu(requireContext(), view);
+        Context wrapper = new ContextThemeWrapper(requireContext(), R.style.AppTheme_PopupMenu);
+        return new IconPopupMenu(wrapper, view);
     }
 
     @Override

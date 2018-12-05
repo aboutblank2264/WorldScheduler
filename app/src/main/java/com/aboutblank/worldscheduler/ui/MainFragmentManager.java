@@ -53,6 +53,7 @@ public class MainFragmentManager {
         intent.putExtra(AlarmClock.EXTRA_HOUR, hour);
         intent.putExtra(AlarmClock.EXTRA_MINUTES, minutes);
         intent.putExtra(AlarmClock.EXTRA_MESSAGE, tag);
+
         mainContext.startActivity(intent);
     }
 }

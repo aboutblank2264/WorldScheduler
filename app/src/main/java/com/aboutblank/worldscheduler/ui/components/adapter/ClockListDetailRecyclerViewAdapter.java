@@ -87,7 +87,6 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
                                 case R.id.add_new:
                                     Log.d(LOG, "Add Alarm");
                                     adapterMediator.addAlarm(String.valueOf(localClock.getText()));
-                                    //TODO add tagging UI
                                     break;
                                 case R.id.delete:
                                     Log.d(LOG, "Delete");

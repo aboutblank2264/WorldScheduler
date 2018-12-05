@@ -12,10 +12,10 @@ public abstract class Keyboard {
     }
 
     public static void showKeyboard(Fragment fragment) {
-        getImm(fragment).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        getImm(fragment).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT);
     }
 
     public static void hideKeyboard(Fragment fragment) {
-        getImm(fragment).hideSoftInputFromWindow(fragment.getView().getRootView().getWindowToken(), 0);
+        getImm(fragment).hideSoftInputFromWindow(fragment.getView().getWindowToken(), 0);
     }
 }

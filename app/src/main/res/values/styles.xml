@@ -9,12 +9,21 @@
         <item name = "android:divider">@color/secondaryAccentColor</item>
         <item name = "android:textColorPrimary">@color/primaryTextColor</item>
         <item name = "android:textColorSecondary">@color/secondaryTextColor</item>
-        <item name = "android:dropDownListViewStyle">@style/AppTheme.TextAppearance.DropDown</item>
+        <item name = "android:dropDownListViewStyle">@style/AppTheme.DropDown</item>
     </style>
 
     <style name = "AppTheme.NoActionBar">
         <item name = "windowActionBar">false</item>
         <item name = "windowNoTitle">true</item>
+    </style>
+
+    <style name = "AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu" >
+        <item name = "iconTint">?android:attr/colorPrimaryDark</item>
+    </style>
+
+    <style name = "AppTheme.DropDown">
+        <item name = "android:textColor">?android:attr/textColorSecondary</item>
+        <item name = "android:dividerHeight">1dp</item>
     </style>
 
     <style name = "AppTheme.TextAppearance">
@@ -32,8 +41,6 @@
     </style>
 
     <style name = "AppTheme.TextAppearance.DropDown">
-        <item name = "android:textColor">?android:attr/textColorSecondary</item>
-        <item name = "android:dividerHeight">1dp</item>
         <item name = "android:textSize">@dimen/drop_down_text_size</item>
     </style>
 
