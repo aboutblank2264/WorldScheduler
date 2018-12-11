@@ -77,7 +77,7 @@ public class ClockListViewModel extends BaseViewModel {
                 onDelete(event.getTimezoneId());
                 break;
             case ADD_SAVED_TIME:
-                addSavedTimeToClock(event.getTimezoneId(), event.getHour(), event.getMinute());
+                addSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute());
                 break;
             case DELETE_SAVED_TIME:
                 deleteSavedTime(event.getTimezoneId(), event.getSavedTimePosition());
@@ -142,7 +142,7 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     @SuppressLint("DefaultLocale")
-    private void addSavedTimeToClock(final String timeZoneId, final int hour, final int minute) {
+    private void addSavedTime(final String timeZoneId, final int hour, final int minute) {
         debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d", timeZoneId, hour, minute));
 
         if (timeZoneId == null) {
@@ -158,14 +158,6 @@ public class ClockListViewModel extends BaseViewModel {
         }
     }
 
-    public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
-        return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
-    }
-
-    public long toMillisFromTimeString(final String timeString) {
-        return getDataService().getMillisFromTimeString(timeString);
-    }
-
     private void deleteSavedTime(final String timeZoneId, final int position) {
         if (timeZoneId == null) {
             postError(new IllegalArgumentException("TimeZoneId cannot be null"));
@@ -178,6 +170,14 @@ public class ClockListViewModel extends BaseViewModel {
                 }
             });
         }
+    }
+
+    public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
+        return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
+    }
+
+    public long toMillisFromTimeString(final String timeString) {
+        return getDataService().getMillisFromTimeString(timeString);
     }
 
     private void addAlarm(final String timeString, final String tag) {

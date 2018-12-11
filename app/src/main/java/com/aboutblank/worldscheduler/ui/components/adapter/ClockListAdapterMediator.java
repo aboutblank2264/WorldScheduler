@@ -3,12 +3,9 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
 
 public interface ClockListAdapterMediator {
-    Clock getClockAt(int position);
-
     int getClockCount();
 
     int getCurrentExpandedPosition();

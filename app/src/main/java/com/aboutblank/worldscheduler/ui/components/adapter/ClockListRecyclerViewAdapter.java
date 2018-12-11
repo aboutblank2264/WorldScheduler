@@ -3,6 +3,7 @@ package com.aboutblank.worldscheduler.ui.components.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
+import com.aboutblank.worldscheduler.ui.components.diffutil.ClockListDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,12 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     private final static String LOG = ClockListRecyclerViewAdapter.class.getSimpleName();
 
     private ClockListAdapterMediator adapterMediator;
-    private RecyclerView parentRecyclerView;
     private RecyclerView.RecycledViewPool savedTimeRecyclerPool;
+    private List<Clock> clocks;
 
     public ClockListRecyclerViewAdapter(ClockListAdapterMediator adapterMediator) {
         this.adapterMediator = adapterMediator;
+        this.clocks = new ArrayList<>();
     }
 
     @NonNull
@@ -49,14 +52,8 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull final RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        this.parentRecyclerView = recyclerView;
-    }
-
-    @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
-        Clock clock = adapterMediator.getClockAt(position);
+        Clock clock = clocks.get(position);
         holder.setClockInfo(clock);
         holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);
 
@@ -68,22 +65,13 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         return adapterMediator.getClockCount();
     }
 
-    public void onClockAdded(int position) {
-        //Do nothing for now. TODO add animation
-    }
+    public void update(List<Clock> newClocks) {
+        ClockListDiffCallback callback = new ClockListDiffCallback(clocks, newClocks);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
 
-    public void onClockRemoved(int position) {
-        notifyItemRemoved(position);
-    }
-
-    public void onSavedTimeAdded(int viewPosition) {
-        ((ClockListHolder) parentRecyclerView.findViewHolderForAdapterPosition(viewPosition)).adapter
-                .notifyDataSetChanged();
-    }
-
-    public void onSavedTimeRemoved(int viewPosition, final int savedTimePosition) {
-        ((ClockListHolder) parentRecyclerView.findViewHolderForAdapterPosition(viewPosition)).adapter
-                .notifyItemChanged(savedTimePosition);
+        clocks.clear();
+        clocks.addAll(newClocks);
+        result.dispatchUpdatesTo(this);
     }
 
     class ClockListHolder extends RecyclerView.ViewHolder {
@@ -154,13 +142,11 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setExpanded(boolean activated) {
-//            if (savedTimes.size() > 0) {
             setVisible(activated ? View.VISIBLE : View.GONE);
             if (activated) {
                 Log.d(LOG, savedTimes.toString());
                 adapter.update(savedTimes);
             }
-//            }
         }
 
         private void setVisible(int visible) {

@@ -108,7 +108,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
                 mainClock.setTimeZone(screenState.getTimeZoneId());
                 break;
             case MILLIS_OF_DAY:
-
                 break;
             case OFFSET_STRING:
                 break;
@@ -128,7 +127,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
 
     private void onClocksReceived(List<Clock> clocks) {
         this.clocks = clocks;
-        clockListAdapter.notifyDataSetChanged();
+        clockListAdapter.update(clocks);
         hideProgressBar();
     }
 
@@ -147,16 +146,16 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         Log.d(LOG, "Hiding progress bar");
     }
 
-    private void onDeleteClock() {
-        clockListAdapter.onClockRemoved(currentExpandedPosition);
-    }
-
     private void onDeleteSavedTime(final int savedTimePosition) {
-        clockListAdapter.onSavedTimeRemoved(currentExpandedPosition, savedTimePosition);
+//        clockListAdapter.onSavedTimeRemoved(currentExpandedPosition, savedTimePosition);
     }
 
     private void onAddSavedTime() {
-        clockListAdapter.onSavedTimeAdded(currentExpandedPosition);
+//        clockListAdapter.onSavedTimeAdded(currentExpandedPosition);
+    }
+
+    private void onDeleteClock() {
+        currentExpandedPosition = -1;
     }
 
     @OnClick(R.id.list_new_fab)
@@ -172,11 +171,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     /*------------------------------------------------------------------*/
     /*------------------- ClockListAdapterMediator ---------------------*/
     /*------------------------------------------------------------------*/
-
-    @Override
-    public Clock getClockAt(final int position) {
-        return clocks.get(position);
-    }
 
     @Override
     public int getClockCount() {

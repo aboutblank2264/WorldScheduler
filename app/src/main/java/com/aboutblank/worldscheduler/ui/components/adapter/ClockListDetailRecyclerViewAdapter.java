@@ -1,6 +1,7 @@
 package com.aboutblank.worldscheduler.ui.components.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
+import com.aboutblank.worldscheduler.ui.components.diffutil.ClockDetailsDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,12 @@ import butterknife.ButterKnife;
 public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<ClockListDetailRecyclerViewAdapter.ClockListDetailViewHolder> {
     private static final String LOG = ClockListDetailRecyclerViewAdapter.class.getSimpleName();
 
-    private List<Long> savedTimes = new ArrayList<>();
+    private List<Long> savedTimes;
     private ClockListAdapterMediator adapterMediator;
 
     ClockListDetailRecyclerViewAdapter(final ClockListAdapterMediator adapterMediator) {
         this.adapterMediator = adapterMediator;
+        this.savedTimes = new ArrayList<>();
     }
 
     @NonNull
@@ -43,8 +46,13 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
     }
 
     void update(List<Long> times) {
+        ClockDetailsDiffCallback callback = new ClockDetailsDiffCallback(savedTimes, times);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
+
         savedTimes.clear();
         savedTimes.addAll(times);
+
+        result.dispatchUpdatesTo(this);
     }
 
     @Override
