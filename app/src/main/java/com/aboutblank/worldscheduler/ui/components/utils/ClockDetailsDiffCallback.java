@@ -1,4 +1,4 @@
-package com.aboutblank.worldscheduler.ui.components.diffutil;
+package com.aboutblank.worldscheduler.ui.components.utils;
 
 import android.support.v7.util.DiffUtil;
 

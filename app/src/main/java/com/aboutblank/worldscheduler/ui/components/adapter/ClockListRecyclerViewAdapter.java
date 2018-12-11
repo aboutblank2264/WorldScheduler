@@ -16,7 +16,7 @@ import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
-import com.aboutblank.worldscheduler.ui.components.diffutil.ClockListDiffCallback;
+import com.aboutblank.worldscheduler.ui.components.utils.ClockListDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;

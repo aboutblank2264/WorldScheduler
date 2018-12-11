@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
-import com.aboutblank.worldscheduler.ui.components.diffutil.ClockDetailsDiffCallback;
+import com.aboutblank.worldscheduler.ui.components.utils.ClockDetailsDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;

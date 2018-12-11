@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.transition.TransitionManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -185,7 +184,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     private void expandClockView(int position, boolean overridePrevious) {
         Log.d(LOG, "OnClick " + currentExpandedPosition);
         currentExpandedPosition = (currentExpandedPosition == position && overridePrevious) ? -1 : position;
-        TransitionManager.beginDelayedTransition(recyclerView);
+//        TransitionManager.beginDelayedTransition(recyclerView);
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
