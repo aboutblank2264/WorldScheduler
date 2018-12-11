@@ -15,7 +15,6 @@ import android.support.v4.app.DialogFragment;
 import com.aboutblank.worldscheduler.WorldApplication;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState;
-import com.aboutblank.worldscheduler.ui.screenstates.ClockListScreenState.ClockListState;
 import com.aboutblank.worldscheduler.viewmodels.events.ClockListEvent;
 
 import java.util.List;
@@ -35,14 +34,14 @@ public class ClockListViewModel extends BaseViewModel {
         debug(LOG, "initializing");
 
         viewModelScreenState = new MutableLiveData<>();
-        viewModelScreenState.setValue(new ClockListScreenState(ClockListState.LOADING));
+        viewModelScreenState.setValue(ClockListScreenState.loading());
 
         //Transformer to get the LiveData list of clocks from data service.
         LiveData<ClockListScreenState> dataSourceScreenState =
                 Transformations.map(getDataService().getAllClocksLive(), new Function<List<Clock>, ClockListScreenState>() {
                     @Override
                     public ClockListScreenState apply(final List<Clock> input) {
-                        return new ClockListScreenState(ClockListState.CLOCKS, input);
+                        return ClockListScreenState.clocks(input);
                     }
                 });
 
@@ -109,17 +108,15 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     private void postError(Throwable throwable) {
-        postValue(new ClockListScreenState(ClockListState.ERROR, throwable));
+        postValue(ClockListScreenState.error(throwable));
     }
 
     private void postLocalTimeZone() {
-        postValue(new ClockListScreenState(ClockListState.LOCAL_TIMEZONE,
-                getDataService().getLocalClock().getTimeZoneId()));
+        postValue(ClockListScreenState.localTimeZone(getDataService().getLocalClock().getTimeZoneId()));
     }
 
     private void postMillisOfDay(int hour, int minute) {
-        postValue(new ClockListScreenState(ClockListState.MILLIS_OF_DAY,
-                getDataService().toMillisOfDay(hour, minute)));
+        postValue(ClockListScreenState.millisOfDay(getDataService().toMillisOfDay(hour, minute)));
     }
 
     public String getOffSetString(@NonNull final String timeZoneId) {
@@ -138,6 +135,7 @@ public class ClockListViewModel extends BaseViewModel {
                 @Override
                 public void run() {
                     getDataService().deleteClock(timeZoneId);
+                    postValue(ClockListScreenState.deleteClock());
                 }
             });
         }
@@ -154,7 +152,7 @@ public class ClockListViewModel extends BaseViewModel {
                 @Override
                 public void run() {
                     getDataService().addSavedTimeToClock(timeZoneId, hour, minute);
-                    postValue(new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME));
+                    postValue(ClockListScreenState.addNewSavedTime());
                 }
             });
         }
@@ -176,6 +174,7 @@ public class ClockListViewModel extends BaseViewModel {
                 @Override
                 public void run() {
                     getDataService().deleteSavedTimeFromClock(timeZoneId, position);
+                    postValue(ClockListScreenState.deleteSavedTime(position));
                 }
             });
         }

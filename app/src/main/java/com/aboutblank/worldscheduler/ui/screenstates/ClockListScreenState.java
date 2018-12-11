@@ -14,16 +14,18 @@ public class ClockListScreenState {
     private String timeZoneId;
     private String offsetString;
     private String[] formattedTimeStrings;
+    private int savedTimePosition;
 
     @SuppressWarnings("unused")
-    private ClockListScreenState() {}
+    private ClockListScreenState() {
+    }
 
-    public ClockListScreenState(ClockListState state) {
+    private ClockListScreenState(ClockListState state) {
         this.state = state;
     }
 
     @SuppressWarnings("unchecked")
-    public ClockListScreenState(final ClockListState state, @NonNull Object object) {
+    private ClockListScreenState(final ClockListState state, @NonNull Object object) {
         this.state = state;
         switch (state) {
             case LOADING:
@@ -49,8 +51,49 @@ public class ClockListScreenState {
             case DELETE_CLOCK:
                 break;
             case DELETE_TIME:
+                savedTimePosition = (int) object;
                 break;
         }
+    }
+
+    public static ClockListScreenState loading() {
+        return new ClockListScreenState(ClockListState.LOADING);
+    }
+
+    public static ClockListScreenState clocks(List<Clock> clocks) {
+        return new ClockListScreenState(ClockListState.CLOCKS, clocks);
+    }
+
+    public static ClockListScreenState error(Throwable throwable) {
+        return new ClockListScreenState(ClockListState.ERROR, throwable);
+    }
+
+    public static ClockListScreenState localTimeZone(String timeZoneId) {
+        return new ClockListScreenState(ClockListState.LOCAL_TIMEZONE, timeZoneId);
+    }
+
+    public static ClockListScreenState millisOfDay(long millisOfDay) {
+        return new ClockListScreenState(ClockListState.MILLIS_OF_DAY, millisOfDay);
+    }
+
+    public static ClockListScreenState offsetString(String offsetString) {
+        return new ClockListScreenState(ClockListState.OFFSET_STRING, offsetString);
+    }
+
+    public static ClockListScreenState formatTimeStrings(String[] formatTimeStrings) {
+        return new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS, formatTimeStrings);
+    }
+
+    public static ClockListScreenState deleteClock() {
+        return new ClockListScreenState(ClockListState.DELETE_CLOCK);
+    }
+
+    public static ClockListScreenState deleteSavedTime(final int savedTimePosition) {
+        return new ClockListScreenState(ClockListState.DELETE_TIME, savedTimePosition);
+    }
+
+    public static ClockListScreenState addNewSavedTime() {
+        return new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME);
     }
 
     public List<Clock> getClocks() {
@@ -79,6 +122,10 @@ public class ClockListScreenState {
 
     public String[] getFormattedTimeStrings() {
         return formattedTimeStrings;
+    }
+
+    public int getSavedTimePosition() {
+        return savedTimePosition;
     }
 
     @Override

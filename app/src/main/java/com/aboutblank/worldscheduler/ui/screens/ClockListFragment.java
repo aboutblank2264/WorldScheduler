@@ -115,11 +115,13 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
             case FORMAT_TIME_STRINGS:
                 break;
             case ADD_NEW_SAVED_TIME:
-
+                onAddSavedTime();
                 break;
             case DELETE_CLOCK:
+                onDeleteClock();
                 break;
             case DELETE_TIME:
+                onDeleteSavedTime(screenState.getSavedTimePosition());
                 break;
         }
     }
@@ -143,6 +145,18 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @Override
     public void hideProgressBar() {
         Log.d(LOG, "Hiding progress bar");
+    }
+
+    private void onDeleteClock() {
+        clockListAdapter.onClockRemoved(currentExpandedPosition);
+    }
+
+    private void onDeleteSavedTime(final int savedTimePosition) {
+        clockListAdapter.onSavedTimeRemoved(currentExpandedPosition, savedTimePosition);
+    }
+
+    private void onAddSavedTime() {
+        clockListAdapter.onSavedTimeAdded(currentExpandedPosition);
     }
 
     @OnClick(R.id.list_new_fab)

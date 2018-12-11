@@ -36,14 +36,13 @@
     </style>
 
     <style name = "AppTheme.TextAppearance.EditTextBar">
-        <item name = "android:textColorHint">@color/secondaryAccentColor</item>
+        <item name = "android:textColorHint">?android:attr/divider</item>
         <item name = "android:textSize">@dimen/sub_text_size</item>
     </style>
 
     <style name = "AppTheme.TextAppearance.DropDown">
         <item name = "android:textSize">@dimen/drop_down_text_size</item>
     </style>
-
 
     <style name = "AppTheme.IconAppearance">
         <item name = "android:backgroundTint">?android:attr/colorPrimaryDark</item>

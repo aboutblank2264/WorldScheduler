@@ -52,7 +52,8 @@ public class TagDialog extends DialogFragment {
                     public void onClick(final DialogInterface dialog, final int which) {
                         listener.onNegativeClick(TagDialog.this);
                     }
-                });
+                })
+                .setTitle("Add message to alarm");
 
         tagEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

@@ -26,6 +26,8 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     private final static String LOG = ClockListRecyclerViewAdapter.class.getSimpleName();
 
     private ClockListAdapterMediator adapterMediator;
+    private RecyclerView parentRecyclerView;
+    private RecyclerView.RecycledViewPool savedTimeRecyclerPool;
 
     public ClockListRecyclerViewAdapter(ClockListAdapterMediator adapterMediator) {
         this.adapterMediator = adapterMediator;
@@ -35,7 +37,21 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     @Override
     public ClockListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_clock_list_item, parent, false);
-        return new ClockListHolder(view, parent.getContext());
+        ClockListHolder clockListHolder = new ClockListHolder(view, parent.getContext());
+
+        if (savedTimeRecyclerPool == null) {
+            savedTimeRecyclerPool = clockListHolder.savedTimeRecyclerView.getRecycledViewPool();
+        } else {
+            clockListHolder.savedTimeRecyclerView.setRecycledViewPool(savedTimeRecyclerPool);
+        }
+
+        return clockListHolder;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull final RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.parentRecyclerView = recyclerView;
     }
 
     @Override
@@ -50,6 +66,24 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
     @Override
     public int getItemCount() {
         return adapterMediator.getClockCount();
+    }
+
+    public void onClockAdded(int position) {
+        //Do nothing for now. TODO add animation
+    }
+
+    public void onClockRemoved(int position) {
+        notifyItemRemoved(position);
+    }
+
+    public void onSavedTimeAdded(int viewPosition) {
+        ((ClockListHolder) parentRecyclerView.findViewHolderForAdapterPosition(viewPosition)).adapter
+                .notifyDataSetChanged();
+    }
+
+    public void onSavedTimeRemoved(int viewPosition, final int savedTimePosition) {
+        ((ClockListHolder) parentRecyclerView.findViewHolderForAdapterPosition(viewPosition)).adapter
+                .notifyItemChanged(savedTimePosition);
     }
 
     class ClockListHolder extends RecyclerView.ViewHolder {
@@ -120,13 +154,13 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setExpanded(boolean activated) {
-            if (savedTimes.size() > 0) {
-                setVisible(activated ? View.VISIBLE : View.GONE);
-                if (activated) {
-                    Log.d(LOG, savedTimes.toString());
-                    adapter.update(savedTimes);
-                }
+//            if (savedTimes.size() > 0) {
+            setVisible(activated ? View.VISIBLE : View.GONE);
+            if (activated) {
+                Log.d(LOG, savedTimes.toString());
+                adapter.update(savedTimes);
             }
+//            }
         }
 
         private void setVisible(int visible) {
