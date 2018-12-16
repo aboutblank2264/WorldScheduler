@@ -8,6 +8,7 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
+import android.database.SQLException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -74,13 +75,18 @@ public class ClockListViewModel extends BaseViewModel {
             case LOAD_CLOCKS:
                 break;
             case DELETE_CLOCK:
-                onDelete(event.getTimezoneId());
+                postDeleteClock(event.getTimezoneId());
                 break;
+            case GET_SAVED_TIMES:
+                postSavedTimes(event.getTimezoneId());
             case ADD_SAVED_TIME:
-                addSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute());
+                postAddSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute());
                 break;
             case DELETE_SAVED_TIME:
-                deleteSavedTime(event.getTimezoneId(), event.getSavedTimePosition());
+                postDeleteSavedTime(event.getTimezoneId(), event.getSavedTime());
+                break;
+            case CHANGE_SAVED_TIME:
+                postChangeSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute(), event.getSavedTime());
                 break;
             case GET_MILLIS_OF_DAY:
                 postMillisOfDay(event.getHour(), event.getMinute());
@@ -98,11 +104,12 @@ public class ClockListViewModel extends BaseViewModel {
                 onFabClick();
                 break;
             case ADD_ALARM:
-                addAlarm(event.getTimestring(), event.getTag());
+                addAlarm(event.getTimeString(), event.getTag());
                 break;
         }
     }
 
+    //Call this method to post ScreenState to UI
     private void postValue(ClockListScreenState screenState) {
         viewModelScreenState.postValue(screenState);
     }
@@ -119,15 +126,7 @@ public class ClockListViewModel extends BaseViewModel {
         postValue(ClockListScreenState.millisOfDay(getDataService().toMillisOfDay(hour, minute)));
     }
 
-    public String getOffSetString(@NonNull final String timeZoneId) {
-        return getDataService().getTimeDifference(timeZoneId);
-    }
-
-    private void onFabClick() {
-        getFragmentManager().changeToPickerFragment(true);
-    }
-
-    private void onDelete(final String timeZoneId) {
+    private void postDeleteClock(final String timeZoneId) {
         if (timeZoneId == null) {
             postError(new IllegalArgumentException("TimeZoneId cannot be null"));
         } else {
@@ -142,7 +141,7 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     @SuppressLint("DefaultLocale")
-    private void addSavedTime(final String timeZoneId, final int hour, final int minute) {
+    private void postAddSavedTime(final String timeZoneId, final int hour, final int minute) {
         debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d", timeZoneId, hour, minute));
 
         if (timeZoneId == null) {
@@ -151,43 +150,84 @@ public class ClockListViewModel extends BaseViewModel {
             getThreadManager().execute(new Runnable() {
                 @Override
                 public void run() {
-                    getDataService().addSavedTimeToClock(timeZoneId, hour, minute);
-                    postValue(ClockListScreenState.addNewSavedTime());
+                    try {
+                        getDataService().addSavedTime(timeZoneId, hour, minute);
+                        postValue(ClockListScreenState.addNewSavedTime());
+                    } catch (SQLException exception) {
+                        postError(new Throwable("Unable to add new time, this time has already been saved."));
+                    }
                 }
             });
         }
     }
 
-    private void deleteSavedTime(final String timeZoneId, final int position) {
-        if (timeZoneId == null) {
-            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
-        } else {
-            getThreadManager().execute(new Runnable() {
-                @Override
-                public void run() {
-                    getDataService().deleteSavedTimeFromClock(timeZoneId, position);
-                    postValue(ClockListScreenState.deleteSavedTime(position));
-                }
-            });
-        }
+    private void postSavedTimes(final String timeZoneId) {
+        checkTimeZoneRunRunnable(timeZoneId, new Runnable() {
+            @Override
+            public void run() {
+                postValue(ClockListScreenState.getSavedTimes(timeZoneId, getDataService().getSavedTimes(timeZoneId)));
+            }
+        });
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void postChangeSavedTime(final String timeZoneId, final int hour, final int minute, final long oldSavedTime) {
+        debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d, oldTime: %d", timeZoneId, hour, minute, oldSavedTime));
+        checkTimeZoneRunRunnable(timeZoneId, new Runnable() {
+            @Override
+            public void run() {
+                getDataService().changeSavedTime(timeZoneId, hour, minute, oldSavedTime);
+            }
+        });
+    }
+
+    private void postDeleteSavedTime(final String timeZoneId, final long savedTime) {
+        checkTimeZoneRunRunnable(timeZoneId, new Runnable() {
+            @Override
+            public void run() {
+                getDataService().deleteSavedTime(timeZoneId, savedTime);
+                postValue(ClockListScreenState.deleteSavedTime());
+            }
+        });
+    }
+
+    public String getOffSetString(@NonNull final String timeZoneId) {
+        return getDataService().getTimeDifference(timeZoneId);
     }
 
     public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
         return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
     }
 
-    public long toMillisFromTimeString(final String timeString) {
-        return getDataService().getMillisFromTimeString(timeString);
+    public void showDialog(DialogFragment dialogFragment, String tag) {
+        getFragmentManager().showDialog(dialogFragment, tag);
+    }
+
+    public int[] convertTimeStringToNumeric(final String timeString) {
+        int[] ret = new int[2];
+        long millis = getDataService().getMillisFromTimeString(timeString);
+        ret[0] = getDataService().getHourOfDay(millis);
+        ret[1] = getDataService().getMinuteOfHour(millis);
+
+        return ret;
+    }
+
+    private void onFabClick() {
+        getFragmentManager().changeToPickerFragment(true);
     }
 
     private void addAlarm(final String timeString, final String tag) {
-        long millis = getDataService().getMillisFromTimeString(timeString);
+        int[] timeFields = convertTimeStringToNumeric(timeString);
 
-        getFragmentManager().addAlarm(tag, getDataService().getHourOfDay(millis),
-                getDataService().getMinuteOfHour(millis));
+        getFragmentManager().addAlarm(tag, timeFields[0], timeFields[1]);
     }
 
-    public void showDialog(DialogFragment dialogFragment, String tag) {
-        getFragmentManager().showDialog(dialogFragment, tag);
+    private void checkTimeZoneRunRunnable(final String timeZoneId, @NonNull final Runnable runnable) {
+
+        if (timeZoneId == null) {
+            postError(new IllegalArgumentException("TimeZoneId cannot be null"));
+        } else {
+            getThreadManager().execute(runnable);
+        }
     }
 }

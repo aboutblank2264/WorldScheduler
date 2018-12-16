@@ -95,13 +95,13 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         RecyclerView savedTimeRecyclerView;
         ClockListDetailRecyclerViewAdapter adapter;
 
-        private List<Long> savedTimes;
+        private String timeZoneId;
 
         ClockListHolder(View itemView, Context context) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            adapter = new ClockListDetailRecyclerViewAdapter(adapterMediator);
+            adapter = new ClockListDetailRecyclerViewAdapter(timeZoneId, adapterMediator);
             savedTimeRecyclerView.setLayoutManager(
                     new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
             savedTimeRecyclerView.setAdapter(adapter);
@@ -111,12 +111,11 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
         void setClockInfo(@NonNull Clock clock) {
             Log.d(LOG, clock.toString());
-            savedTimes = clock.getSavedTimes() == null ? new ArrayList<Long>() : clock.getSavedTimes();
+            this.timeZoneId = clock.getTimeZoneId();
 
-            timeZone.setText(clock.getName());
-
-            timeZoneCompare.setText(adapterMediator.getOffSetString(clock.getTimeZoneId()));
-            simpleDateClock.setTimeZone(clock.getTimeZoneId());
+            timeZone.setText(timeZoneId);
+            timeZoneCompare.setText(adapterMediator.getOffSetString(timeZoneId));
+            simpleDateClock.setTimeZone(timeZoneId);
         }
 
         void setOnClickListener(View.OnClickListener listener) {
@@ -128,7 +127,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
                 @Override
                 public void onClick(final View v) {
                     Log.d(LOG, "Add New");
-                    adapterMediator.addNewSavedTime(ClockListHolder.this.getAdapterPosition());
+                    adapterMediator.popupNewSaveTime(ClockListHolder.this.getAdapterPosition());
                 }
             });
 
@@ -144,8 +143,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         void setExpanded(boolean activated) {
             setVisible(activated ? View.VISIBLE : View.GONE);
             if (activated) {
-                Log.d(LOG, savedTimes.toString());
-                adapter.update(savedTimes);
+                adapter.update(adapterMediator.getSavedTimes(timeZoneId));
             }
         }
 

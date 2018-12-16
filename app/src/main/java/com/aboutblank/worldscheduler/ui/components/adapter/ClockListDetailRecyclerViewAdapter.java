@@ -24,10 +24,12 @@ import butterknife.ButterKnife;
 public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<ClockListDetailRecyclerViewAdapter.ClockListDetailViewHolder> {
     private static final String LOG = ClockListDetailRecyclerViewAdapter.class.getSimpleName();
 
+    private String timeZoneId;
     private List<Long> savedTimes;
     private ClockListAdapterMediator adapterMediator;
 
-    ClockListDetailRecyclerViewAdapter(final ClockListAdapterMediator adapterMediator) {
+    ClockListDetailRecyclerViewAdapter(final String timeZoneId, final ClockListAdapterMediator adapterMediator) {
+        this.timeZoneId = timeZoneId;
         this.adapterMediator = adapterMediator;
         this.savedTimes = new ArrayList<>();
     }
@@ -42,7 +44,8 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
     @Override
     public void onBindViewHolder(@NonNull final ClockListDetailViewHolder holder, final int position) {
         String[] times = adapterMediator.getTimeStrings(savedTimes.get(position));
-        holder.setTimes(times[0], times[1]);
+        holder.setMillis(savedTimes.get(position));
+        holder.setTimeStrings(times[0], times[1]);
     }
 
     void update(List<Long> times) {
@@ -70,6 +73,15 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
         @BindView(R.id.detail_options)
         Button optionsButton;
 
+        private long millis;
+
+        private View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                adapterMediator.popupChangeSaveTime(timeZoneId, String.valueOf(((TextView) v).getText()), millis);
+            }
+        };
+
         ClockListDetailViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -77,9 +89,16 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
             setMenuButton();
         }
 
-        void setTimes(String localTime, String otherTime) {
+        void setMillis(long time) {
+            this.millis = time;
+        }
+
+        void setTimeStrings(String localTime, String otherTime) {
             localClock.setText(localTime);
             otherClock.setText(otherTime);
+
+            localClock.setOnClickListener(listener);
+            otherClock.setOnClickListener(listener);
         }
 
         void setMenuButton() {

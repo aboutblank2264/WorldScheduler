@@ -10,12 +10,8 @@ public class TimeZone {
     @NonNull
     private String id;
 
-    @NonNull
-    private String name;
-
-    public TimeZone(@NonNull String id, @NonNull String name) {
+    public TimeZone(@NonNull final String id) {
         this.id = id;
-        this.name = name;
     }
 
     @NonNull
@@ -23,31 +19,19 @@ public class TimeZone {
         return id;
     }
 
-    @NonNull
-    public String getName() {
-        return name;
-    }
-
-    public String toPrintableName() {
-        return "TimeZone { " +
-                "zoneId = '" + id + '\'' +
-                ", name = '" + name + '\'' +
-                '}';
-    }
-
     //NOTE: this is kind of a hack to get AutoCompleteTextView to work as quickly as possible.
     // https://stackoverflow.com/questions/13063849/using-android-autocompletetextview-with-arrayadapterobjects-instead-of-arrayad
     @Override
     public String toString() {
-        return name;
+        return id;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj.getClass() == TimeZone.class) {
+        if (obj.getClass() == TimeZone.class) {
             TimeZone t = (TimeZone) obj;
 
-            return t.getId().equals(id) && t.getName().equals(name);
+            return t.getId().equals(id);
         }
         return false;
     }

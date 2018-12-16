@@ -16,7 +16,7 @@ public interface ClockDao {
     @Query("SELECT * from Clock where timeZoneId = :timeZoneId")
     Clock getClockById(String timeZoneId);
 
-    @Query("SELECT * from Clock order by id")
+    @Query("SELECT * from Clock")
     LiveData<List<Clock>> getAllClocksLive();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,9 +27,6 @@ public interface ClockDao {
 
     @Query("DELETE from Clock where timeZoneId = :timeZoneId")
     void deleteClock(String timeZoneId);
-
-    @Query("DELETE from Clock where id = :id")
-    void deleteClock(int id);
 
     @Delete
     void deleteClock(Clock clock);

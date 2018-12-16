@@ -1,7 +1,5 @@
 package com.aboutblank.worldscheduler.backend.time;
 
-import android.support.annotation.NonNull;
-
 import com.aboutblank.worldscheduler.backend.room.TimeZone;
 
 import org.joda.time.DateTime;
@@ -31,14 +29,12 @@ public abstract class TimeFormatter {
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(TIME_FORMAT);
 
-    private static String[] INVALID_STRINGS = {"Etc"};
-
     public static List<String> formatList(Set<String> cities) {
         List<String> ret = new ArrayList<>();
 
         for (String city : cities) {
             if (checkIfValid(city)) {
-                ret.add(TimeFormatter.formatTimeZoneId(city));
+                ret.add(city);
             }
         }
 
@@ -55,7 +51,7 @@ public abstract class TimeFormatter {
 
         for (String id : timeZoneIds) {
             if (checkIfValid(id)) {
-                timeZoneList.add(new TimeZone(id, TimeFormatter.formatTimeZoneId(id)));
+                timeZoneList.add(new TimeZone(id));
             }
         }
 
@@ -63,22 +59,7 @@ public abstract class TimeFormatter {
     }
 
     private static boolean checkIfValid(String city) {
-        if (city.indexOf(SLASH) < 0) {
-            return false;
-        }
-        for (String invalid : INVALID_STRINGS) {
-            if (city.contains(invalid)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static String formatTimeZoneId(@NonNull String timeZoneId) {
-        int lastSlashIndex = timeZoneId.lastIndexOf(SLASH);
-
-        return timeZoneId.substring(lastSlashIndex + 1).replace(UNDER, SPACE);
+        return city.indexOf(SLASH) > 0;
     }
 
     public static String getTimeDifference(String timeZoneId) {

@@ -71,18 +71,18 @@ public class TimeFormatterTest {
         System.out.println(timezones.toString());
 
         assertEquals(timezones.size(), 3);
-        assertFalse(timezones.contains(new TimeZone("HST", "HST")));
-        assertTrue(timezones.contains(new TimeZone("Pacific/Apia", "Apia")));
-        assertTrue(timezones.contains(new TimeZone("America/Indiana/Indianapolis", "Indianapolis")));
+        assertFalse(timezones.contains(new TimeZone("HST")));
+        assertTrue(timezones.contains(new TimeZone("Pacific/Apia")));
+        assertTrue(timezones.contains(new TimeZone("America/Indiana/Indianapolis")));
     }
 
     @Test
     public void formatTimeZoneId() {
-        assertEquals(TimeFormatter.formatTimeZoneId(""), "");
-        assertEquals(TimeFormatter.formatTimeZoneId(foobar), "bar");
-        assertEquals(TimeFormatter.formatTimeZoneId("Pacific/Apia"), "Apia");
-        assertEquals(TimeFormatter.formatTimeZoneId("America/Grand_Turk"), "Grand Turk");
-        assertEquals(TimeFormatter.formatTimeZoneId("America/Indiana/Indianapolis"), "Indianapolis");
+        assertEquals((""), "");
+        assertEquals((foobar), "bar");
+        assertEquals(("Pacific/Apia"), "Apia");
+        assertEquals(("America/Grand_Turk"), "Grand Turk");
+        assertEquals(("America/Indiana/Indianapolis"), "Indianapolis");
     }
 
     @Test
@@ -124,7 +124,7 @@ public class TimeFormatterTest {
     @Test
     public void millisToTimeTest() {
         assertEquals(TimeFormatter.toClockString(0), "00:00 AM");
-        assertEquals(TimeFormatter.toMillisOfDay(0,0), 0);
+        assertEquals(TimeFormatter.toMillisOfDay(0, 0), 0);
 
         long zeroToTaipei = TimeFormatter.toMillisOfTimeZone(0, taipei);
         assertEquals(zeroToTaipei, 57600000);

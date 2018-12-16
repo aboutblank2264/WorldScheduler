@@ -29,9 +29,7 @@ public class ClockListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(final int oldItemPosition, final int newItemPosition) {
-        return oldList.get(oldItemPosition).getId() == newList.get(newItemPosition).getId() &&
-                oldList.get(oldItemPosition).getName().equals(newList.get(newItemPosition).getName()) &&
-                oldList.get(oldItemPosition).getTimeZoneId().equals(newList.get(newItemPosition).getTimeZoneId());
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 
     @Override

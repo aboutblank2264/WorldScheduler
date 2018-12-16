@@ -9,12 +9,12 @@ import java.util.List;
 public class ClockListScreenState {
     private ClockListState state;
     private List<Clock> clocks;
+    private List<Long> savedTimes;
     private Throwable throwable;
     private long millisOfDay;
     private String timeZoneId;
     private String offsetString;
     private String[] formattedTimeStrings;
-    private int savedTimePosition;
 
     @SuppressWarnings("unused")
     private ClockListScreenState() {
@@ -25,33 +25,38 @@ public class ClockListScreenState {
     }
 
     @SuppressWarnings("unchecked")
-    private ClockListScreenState(final ClockListState state, @NonNull Object object) {
+    private ClockListScreenState(final ClockListState state, @NonNull Object... objects) {
         this.state = state;
         switch (state) {
             case LOADING:
                 break;
             case CLOCKS:
-                clocks = (List<Clock>) object;
+                clocks = (List<Clock>) objects[0];
                 break;
             case ERROR:
-                throwable = (Throwable) object;
+                throwable = (Throwable) objects[0];
                 break;
             case LOCAL_TIMEZONE:
-                timeZoneId = (String) object;
+                timeZoneId = (String) objects[0];
                 break;
             case MILLIS_OF_DAY:
-                millisOfDay = (long) object;
+                millisOfDay = (long) objects[0];
                 break;
             case OFFSET_STRING:
-                offsetString = (String) object;
+                offsetString = (String) objects[0];
                 break;
             case FORMAT_TIME_STRINGS:
-                formattedTimeStrings = (String[]) object;
+                formattedTimeStrings = (String[]) objects[0];
+                break;
+            case GET_SAVED_TIMES:
+                timeZoneId = (String) objects[0];
+                savedTimes = (List<Long>) objects[1];
+                break;
+            case ADD_NEW_SAVED_TIME:
                 break;
             case DELETE_CLOCK:
                 break;
-            case DELETE_TIME:
-                savedTimePosition = (int) object;
+            case DELETE_SAVED_TIME:
                 break;
         }
     }
@@ -88,12 +93,16 @@ public class ClockListScreenState {
         return new ClockListScreenState(ClockListState.DELETE_CLOCK);
     }
 
-    public static ClockListScreenState deleteSavedTime(final int savedTimePosition) {
-        return new ClockListScreenState(ClockListState.DELETE_TIME, savedTimePosition);
+    public static ClockListScreenState deleteSavedTime() {
+        return new ClockListScreenState(ClockListState.DELETE_SAVED_TIME);
     }
 
     public static ClockListScreenState addNewSavedTime() {
         return new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME);
+    }
+
+    public static ClockListScreenState getSavedTimes(final String timeZoneId, final List<Long> savedTimes) {
+        return new ClockListScreenState(ClockListState.GET_SAVED_TIMES, timeZoneId, savedTimes);
     }
 
     public List<Clock> getClocks() {
@@ -124,8 +133,8 @@ public class ClockListScreenState {
         return formattedTimeStrings;
     }
 
-    public int getSavedTimePosition() {
-        return savedTimePosition;
+    public List<Long> getSavedTimes() {
+        return savedTimes;
     }
 
     @Override
@@ -152,8 +161,9 @@ public class ClockListScreenState {
         MILLIS_OF_DAY,
         OFFSET_STRING,
         FORMAT_TIME_STRINGS,
+        GET_SAVED_TIMES,
         ADD_NEW_SAVED_TIME,
         DELETE_CLOCK,
-        DELETE_TIME
+        DELETE_SAVED_TIME
     }
 }

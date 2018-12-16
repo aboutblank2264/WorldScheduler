@@ -12,11 +12,7 @@ public interface DataService {
 
     Clock getClockById(String timeZoneId);
 
-    Clock getClockByName(String name);
-
     LiveData<List<Clock>> getAllClocksLive();
-
-    List<String> getCityNames();
 
     List<TimeZone> getTimeZones();
 
@@ -30,11 +26,13 @@ public interface DataService {
 
     long toMillisOfDay(int hour, int minute);
 
-    void addSavedTimeToClock(@NonNull String timeZoneId, long millisOfDay);
+    void addSavedTime(@NonNull String timeZoneId, int hour, int minute);
 
-    void addSavedTimeToClock(@NonNull String timeZoneId, int hour, int minute);
+    List<Long> getSavedTimes(@NonNull String timeZoneId);
 
-    void deleteSavedTimeFromClock(@NonNull String timeZoneId, int position);
+    void changeSavedTime(@NonNull String timeZoneId, int hour, int minute, long oldSavedTime);
+
+    void deleteSavedTime(@NonNull String timeZoneId, long savedTime);
 
     String[] getFormattedTimeStrings(@NonNull String timeZoneId, long savedTime);
 

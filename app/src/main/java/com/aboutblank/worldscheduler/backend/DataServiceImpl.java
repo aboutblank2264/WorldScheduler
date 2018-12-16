@@ -1,12 +1,15 @@
 package com.aboutblank.worldscheduler.backend;
 
 import android.arch.lifecycle.LiveData;
+import android.database.SQLException;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.backend.room.ClockDao;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
+import com.aboutblank.worldscheduler.backend.room.SavedTime;
+import com.aboutblank.worldscheduler.backend.room.SavedTimeDao;
 import com.aboutblank.worldscheduler.backend.room.TimeZone;
 import com.aboutblank.worldscheduler.backend.room.TimeZoneDao;
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
@@ -18,10 +21,12 @@ import java.util.List;
 public class DataServiceImpl implements DataService {
 
     private ClockDao clockDao;
+    private SavedTimeDao savedTimeDao;
     private TimeZoneDao timeZoneDao;
 
     public DataServiceImpl(LocalDatabase localDatabase, ThreadManager threadManager) {
         this.clockDao = localDatabase.clockDao();
+        this.savedTimeDao = localDatabase.savedTimeDao();
         this.timeZoneDao = localDatabase.timeZoneDao();
         initialize(threadManager);
     }
@@ -43,19 +48,8 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public Clock getClockByName(String name) {
-        String timeZone = timeZoneDao.getTimeZoneIdByName(name);
-        return clockDao.getClockById(timeZone);
-    }
-
-    @Override
     public LiveData<List<Clock>> getAllClocksLive() {
         return clockDao.getAllClocksLive();
-    }
-
-    @Override
-    public List<String> getCityNames() {
-        return timeZoneDao.getTimeZoneNames();
     }
 
     @Override
@@ -89,22 +83,23 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void addSavedTimeToClock(@NonNull final String timeZoneId, long millisOfDay) {
-        Clock clock = clockDao.getClockById(timeZoneId);
-        clock.addSavedTime(millisOfDay);
-        clockDao.update(clock);
+    public void addSavedTime(@NonNull final String timeZoneId, int hour, int minute) throws SQLException {
+        savedTimeDao.addTime(new SavedTime(toMillisOfDay(hour, minute), timeZoneId));
     }
 
     @Override
-    public void addSavedTimeToClock(@NonNull final String timeZoneId, int hour, int minute) {
-        addSavedTimeToClock(timeZoneId, toMillisOfDay(hour, minute));
+    public List<Long> getSavedTimes(@NonNull final String timeZoneId) {
+        return savedTimeDao.getTimes(timeZoneId);
     }
 
     @Override
-    public void deleteSavedTimeFromClock(@NonNull final String timeZoneId, int position) {
-        Clock clock = clockDao.getClockById(timeZoneId);
-        clock.getSavedTimes().remove(position);
-        clockDao.update(clock);
+    public void changeSavedTime(@NonNull final String timeZoneId, int hour, int minute, long oldSavedTime) {
+        savedTimeDao.updateTime(timeZoneId, oldSavedTime, toMillisOfDay(hour, minute));
+    }
+
+    @Override
+    public void deleteSavedTime(@NonNull final String timeZoneId, long oldSavedTime) {
+        savedTimeDao.delete(timeZoneId, oldSavedTime);
     }
 
     @Override
