@@ -9,14 +9,21 @@ import android.arch.persistence.room.PrimaryKey;
         foreignKeys = {
                 @ForeignKey(entity = Clock.class, parentColumns = "timeZoneId", childColumns = "timeZoneId", onDelete = ForeignKey.CASCADE)})
 public class SavedTime {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    protected int id;
+
     private long time;
 
     private String timeZoneId;
 
     public SavedTime(final long time, final String timeZoneId) {
+        this.id = 0;
         this.time = time;
         this.timeZoneId = timeZoneId;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTimeZoneId() {
@@ -33,6 +40,9 @@ public class SavedTime {
 
     @Override
     public String toString() {
-        return "SavedTime = " + time;
+        return "SavedTime{" +
+                "time=" + time +
+                ", timeZoneId='" + timeZoneId + '\'' +
+                '}';
     }
 }

@@ -42,6 +42,8 @@ import butterknife.OnClick;
 public class ClockListFragment extends BaseFragment implements ClockListAdapterMediator {
     private final static String LOG = ClockListFragment.class.getSimpleName();
 
+    private final static String EXPAND_POSITION = "expandPosition";
+
     @BindView(R.id.list_clock)
     SimpleDateClock mainClock;
 
@@ -116,22 +118,19 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
                 break;
             case FORMAT_TIME_STRINGS:
                 break;
-            case GET_SAVED_TIMES:
-                onGetSavedTimes(screenState.getTimeZoneId(), screenState.getSavedTimes());
-                break;
             case ADD_NEW_SAVED_TIME:
-                onAddSavedTime();
+            case DELETE_SAVED_TIME:
+            case GET_SAVED_TIMES:
+                onUpdateSavedTimes(screenState.getTimeZoneId(), screenState.getSavedTimes());
                 break;
             case DELETE_CLOCK:
-                onDeleteClock();
-                break;
-            case DELETE_SAVED_TIME:
-                onDeleteSavedTime();
+                onDeleteClock(screenState.getTimeZoneId());
                 break;
         }
     }
 
     private void onClocksReceived(List<Clock> clocks) {
+        Log.d(LOG, "onClockReceived: " + clocks.toString());
         this.clocks = clocks;
         clockListAdapter.update(clocks);
         hideProgressBar();
@@ -152,7 +151,9 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         Log.d(LOG, "Hiding progress bar");
     }
 
-    private void onGetSavedTimes(@NonNull String timeZoneId, List<Long> savedTimes) {
+    private void onUpdateSavedTimes(@NonNull String timeZoneId, List<Long> savedTimes) {
+        Log.d(LOG, String.format("TimeZone: %s, SavedTimes: %s", timeZoneId, savedTimes.toString()));
+
         savedTimeMap.put(timeZoneId, savedTimes);
 
         if (clocks.get(currentExpandedPosition).getTimeZoneId().equals(timeZoneId)) {
@@ -160,16 +161,9 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         }
     }
 
-    private void onDeleteSavedTime() {
-//        clockListAdapter.onSavedTimeRemoved(currentExpandedPosition, savedTimePosition);
-    }
-
-    private void onAddSavedTime() {
-//        clockListAdapter.onSavedTimeAdded(currentExpandedPosition);
-    }
-
-    private void onDeleteClock() {
-        currentExpandedPosition = -1;
+    private void onDeleteClock(String timeZoneId) {
+        expandClockView(-1, true);
+        savedTimeMap.remove(timeZoneId);
     }
 
     @OnClick(R.id.list_new_fab)
@@ -302,6 +296,8 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     private void postEvent(ClockListEvent event) {
-        viewModel.consumeEvent(event);
+        if (viewModel != null) {
+            viewModel.consumeEvent(event);
+        }
     }
 }

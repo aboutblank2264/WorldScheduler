@@ -1,7 +1,6 @@
 package com.aboutblank.worldscheduler.backend;
 
 import android.arch.lifecycle.LiveData;
-import android.database.SQLException;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.ThreadManager;
@@ -79,7 +78,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void addSavedTime(@NonNull final String timeZoneId, int hour, int minute) throws SQLException {
+    public void addSavedTime(@NonNull final String timeZoneId, int hour, int minute) {
         savedTimeDao.addTime(new SavedTime(toMillisOfDay(hour, minute), timeZoneId));
     }
 

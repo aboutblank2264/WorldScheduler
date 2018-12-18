@@ -53,6 +53,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
+        Log.d(LOG, clocks.toString());
         Clock clock = clocks.get(position);
         holder.setClockInfo(clock);
         holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);

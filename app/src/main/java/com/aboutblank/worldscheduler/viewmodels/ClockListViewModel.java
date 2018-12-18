@@ -8,7 +8,6 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
-import android.database.SQLException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -23,6 +22,7 @@ import java.util.List;
 public class ClockListViewModel extends BaseViewModel {
     private final static String LOG = ClockListViewModel.class.getSimpleName();
 
+    private LiveData<ClockListScreenState> dataSourceScreenState;
     private MutableLiveData<ClockListScreenState> viewModelScreenState;
     private MediatorLiveData<ClockListScreenState> joinedScreenState;
 
@@ -38,8 +38,8 @@ public class ClockListViewModel extends BaseViewModel {
         viewModelScreenState.setValue(ClockListScreenState.loading());
 
         //Transformer to get the LiveData list of clocks from data service.
-        LiveData<ClockListScreenState> dataSourceScreenState =
-                Transformations.map(getDataService().getAllClocksLive(), new Function<List<Clock>, ClockListScreenState>() {
+        dataSourceScreenState = Transformations.map(getDataService().getAllClocksLive(),
+                new Function<List<Clock>, ClockListScreenState>() {
                     @Override
                     public ClockListScreenState apply(final List<Clock> input) {
                         return ClockListScreenState.clocks(input);
@@ -73,12 +73,14 @@ public class ClockListViewModel extends BaseViewModel {
         debug(LOG, event.toString());
         switch (event.getEvent()) {
             case LOAD_CLOCKS:
+                postClocks();
                 break;
             case DELETE_CLOCK:
                 postDeleteClock(event.getTimezoneId());
                 break;
             case GET_SAVED_TIMES:
                 postSavedTimes(event.getTimezoneId());
+                break;
             case ADD_SAVED_TIME:
                 postAddSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute());
                 break;
@@ -118,6 +120,10 @@ public class ClockListViewModel extends BaseViewModel {
         postValue(ClockListScreenState.error(throwable));
     }
 
+    private void postClocks() {
+        postValue(dataSourceScreenState.getValue());
+    }
+
     private void postLocalTimeZone() {
         postValue(ClockListScreenState.localTimeZone(getDataService().getLocalClock().getTimeZoneId()));
     }
@@ -134,7 +140,7 @@ public class ClockListViewModel extends BaseViewModel {
                 @Override
                 public void run() {
                     getDataService().deleteClock(timeZoneId);
-                    postValue(ClockListScreenState.deleteClock());
+                    postValue(ClockListScreenState.deleteClock(timeZoneId));
                 }
             });
         }
@@ -150,12 +156,8 @@ public class ClockListViewModel extends BaseViewModel {
             getThreadManager().execute(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        getDataService().addSavedTime(timeZoneId, hour, minute);
-                        postValue(ClockListScreenState.addNewSavedTime());
-                    } catch (SQLException exception) {
-                        postError(new Throwable("Unable to add new time, this time has already been saved."));
-                    }
+                    getDataService().addSavedTime(timeZoneId, hour, minute);
+                    postValue(ClockListScreenState.addNewSavedTime(timeZoneId, getDataService().getSavedTimes(timeZoneId)));
                 }
             });
         }
@@ -186,7 +188,7 @@ public class ClockListViewModel extends BaseViewModel {
             @Override
             public void run() {
                 getDataService().deleteSavedTime(timeZoneId, savedTime);
-                postValue(ClockListScreenState.deleteSavedTime());
+                postValue(ClockListScreenState.deleteSavedTime(timeZoneId, getDataService().getSavedTimes(timeZoneId)));
             }
         });
     }
@@ -214,6 +216,7 @@ public class ClockListViewModel extends BaseViewModel {
 
     private void onFabClick() {
         getFragmentManager().changeToPickerFragment(true);
+        postClocks();
     }
 
     private void addAlarm(final String timeString, final String tag) {

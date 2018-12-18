@@ -13,7 +13,7 @@ public interface SavedTimeDao {
     @Query("SELECT time from SavedTime where timeZoneId = :timeZoneId")
     List<Long> getTimes(String timeZoneId);
 
-    @Insert(onConflict = OnConflictStrategy.FAIL)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTime(SavedTime savedTime);
 
     @Query("UPDATE SavedTime SET time = :newTime WHERE timeZoneId = :timeZoneId AND time = :oldTime")

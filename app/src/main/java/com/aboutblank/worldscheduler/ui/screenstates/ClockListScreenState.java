@@ -48,15 +48,14 @@ public class ClockListScreenState {
             case FORMAT_TIME_STRINGS:
                 formattedTimeStrings = (String[]) objects[0];
                 break;
+            case DELETE_CLOCK:
+                timeZoneId = (String) objects[0];
+                break;
+            case ADD_NEW_SAVED_TIME:
+            case DELETE_SAVED_TIME:
             case GET_SAVED_TIMES:
                 timeZoneId = (String) objects[0];
                 savedTimes = (List<Long>) objects[1];
-                break;
-            case ADD_NEW_SAVED_TIME:
-                break;
-            case DELETE_CLOCK:
-                break;
-            case DELETE_SAVED_TIME:
                 break;
         }
     }
@@ -89,16 +88,16 @@ public class ClockListScreenState {
 //        return new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS, formatTimeStrings);
 //    }
 
-    public static ClockListScreenState deleteClock() {
-        return new ClockListScreenState(ClockListState.DELETE_CLOCK);
+    public static ClockListScreenState deleteClock(String timeZoneId) {
+        return new ClockListScreenState(ClockListState.DELETE_CLOCK, timeZoneId);
     }
 
-    public static ClockListScreenState deleteSavedTime() {
-        return new ClockListScreenState(ClockListState.DELETE_SAVED_TIME);
+    public static ClockListScreenState deleteSavedTime(final String timeZoneId, final List<Long> savedTimes) {
+        return new ClockListScreenState(ClockListState.DELETE_SAVED_TIME, timeZoneId, savedTimes);
     }
 
-    public static ClockListScreenState addNewSavedTime() {
-        return new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME);
+    public static ClockListScreenState addNewSavedTime(final String timeZoneId, final List<Long> savedTimes) {
+        return new ClockListScreenState(ClockListState.ADD_NEW_SAVED_TIME, timeZoneId, savedTimes);
     }
 
     public static ClockListScreenState getSavedTimes(final String timeZoneId, final List<Long> savedTimes) {

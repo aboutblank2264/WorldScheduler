@@ -60,7 +60,7 @@ public final class ClockListEvent {
         }
     }
 
-    public static ClockListEvent loadClock() {
+    public static ClockListEvent loadClocks() {
         return new ClockListEvent(Event.LOAD_CLOCKS);
     }
 
