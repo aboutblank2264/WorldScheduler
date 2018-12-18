@@ -1,7 +1,5 @@
 package com.aboutblank.worldscheduler.backend.time;
 
-import com.aboutblank.worldscheduler.backend.room.TimeZone;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -43,19 +41,31 @@ public abstract class TimeFormatter {
     }
 
     public static List<TimeZone> getListOfTimeZones() {
-        return convertToTimeZone(DateTimeZone.getAvailableIDs());
-    }
+        List<TimeZone> timeZones = new ArrayList<>();
 
-    public static List<TimeZone> convertToTimeZone(Set<String> timeZoneIds) {
-        List<TimeZone> timeZoneList = new ArrayList<>();
-
-        for (String id : timeZoneIds) {
-            if (checkIfValid(id)) {
-                timeZoneList.add(new TimeZone(id));
+        for(String id : DateTimeZone.getAvailableIDs()) {
+            if(checkIfValid(id)) {
+                timeZones.add(toTimeZone(id));
             }
         }
 
-        return timeZoneList;
+        return timeZones;
+    }
+//    public static List<String> getListOfTimeZones() {
+//        List<String> timeZones = new ArrayList<>();
+//
+//        for(String id : DateTimeZone.getAvailableIDs()) {
+//            if(checkIfValid(id)) {
+//                timeZones.add(id);
+//            }
+//        }
+//
+//        return timeZones;
+//    }
+
+    private static TimeZone toTimeZone(String timeZoneId) {
+        int lastIndexOf = timeZoneId.lastIndexOf(SLASH);
+        return TimeZone.create(timeZoneId, timeZoneId.substring(0, lastIndexOf), timeZoneId.substring(lastIndexOf + 1));
     }
 
     private static boolean checkIfValid(String city) {

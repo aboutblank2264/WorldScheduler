@@ -85,9 +85,9 @@ public class ClockListScreenState {
         return new ClockListScreenState(ClockListState.OFFSET_STRING, offsetString);
     }
 
-    public static ClockListScreenState formatTimeStrings(String[] formatTimeStrings) {
-        return new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS, formatTimeStrings);
-    }
+//    public static ClockListScreenState formatTimeStrings(String[] formatTimeStrings) {
+//        return new ClockListScreenState(ClockListState.FORMAT_TIME_STRINGS, formatTimeStrings);
+//    }
 
     public static ClockListScreenState deleteClock() {
         return new ClockListScreenState(ClockListState.DELETE_CLOCK);

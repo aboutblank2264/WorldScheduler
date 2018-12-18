@@ -30,6 +30,7 @@ public final class ClockListEvent {
                 break;
             case GET_SAVED_TIMES:
                 bundle.putString(TIMEZONEID, (String) data[0]);
+                break;
             case ADD_SAVED_TIME:
                 bundle.putString(TIMEZONEID, (String) data[0]);
                 bundle.putInt(HOUR, (int) data[1]);

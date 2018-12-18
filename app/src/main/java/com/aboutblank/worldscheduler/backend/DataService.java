@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.backend.room.TimeZone;
+import com.aboutblank.worldscheduler.backend.time.TimeZone;
 
 import java.util.List;
 

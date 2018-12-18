@@ -6,7 +6,7 @@
     android:focusable = "true"
     >
 
-    <AutoCompleteTextView
+    <android.support.v7.widget.AppCompatAutoCompleteTextView
         android:id = "@+id/pick_auto_text"
         android:layout_width = "0dp"
         android:layout_height = "wrap_content"
@@ -15,13 +15,14 @@
         android:hint = "@string/picker_hint"
         android:inputType = "textNoSuggestions"
         android:padding = "8dp"
+        android:ems="10"
         app:layout_constraintLeft_toLeftOf = "parent"
         app:layout_constraintRight_toLeftOf = "@id/pick_clear_text"
         app:layout_constraintTop_toTopOf = "parent"
         style="@style/AppTheme.TextAppearance.EditTextBar"
         >
         <requestFocus />
-    </AutoCompleteTextView>
+    </android.support.v7.widget.AppCompatAutoCompleteTextView>
 
     <Button
         android:id = "@+id/pick_clear_text"

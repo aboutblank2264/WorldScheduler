@@ -10,9 +10,8 @@ import com.aboutblank.worldscheduler.backend.room.ClockDao;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 import com.aboutblank.worldscheduler.backend.room.SavedTime;
 import com.aboutblank.worldscheduler.backend.room.SavedTimeDao;
-import com.aboutblank.worldscheduler.backend.room.TimeZone;
-import com.aboutblank.worldscheduler.backend.room.TimeZoneDao;
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
+import com.aboutblank.worldscheduler.backend.time.TimeZone;
 
 import org.joda.time.DateTimeZone;
 
@@ -22,12 +21,11 @@ public class DataServiceImpl implements DataService {
 
     private ClockDao clockDao;
     private SavedTimeDao savedTimeDao;
-    private TimeZoneDao timeZoneDao;
+    private List<TimeZone> timeZones;
 
     public DataServiceImpl(LocalDatabase localDatabase, ThreadManager threadManager) {
         this.clockDao = localDatabase.clockDao();
         this.savedTimeDao = localDatabase.savedTimeDao();
-        this.timeZoneDao = localDatabase.timeZoneDao();
         initialize(threadManager);
     }
 
@@ -35,9 +33,7 @@ public class DataServiceImpl implements DataService {
         threadManager.execute(new Runnable() {
             @Override
             public void run() {
-                if (timeZoneDao.count() == 0) {
-                    timeZoneDao.insert(TimeFormatter.getListOfTimeZones());
-                }
+                timeZones = TimeFormatter.getListOfTimeZones();
             }
         });
     }
@@ -54,7 +50,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public List<TimeZone> getTimeZones() {
-        return timeZoneDao.getTimeZones();
+        return timeZones;
     }
 
     @Override

@@ -4,9 +4,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.WorldApplication;
-import com.aboutblank.worldscheduler.backend.room.TimeZone;
+import com.aboutblank.worldscheduler.backend.time.TimeZone;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
-import com.aboutblank.worldscheduler.ui.screenstates.State;
+import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState.ClockPickerState;
 
 import java.util.List;
 
@@ -24,7 +24,6 @@ public class ClockPickerViewModel extends BaseViewModel {
     @Override
     void initialize() {
         screenState = new MutableLiveData<>();
-        screenState.postValue(new ClockPickerScreenState(State.LOADING));
 
         if (timeZones == null) {
             getThreadManager().execute(new Runnable() {
@@ -44,15 +43,15 @@ public class ClockPickerViewModel extends BaseViewModel {
     }
 
     private void onRetrieveTimeZones(List<TimeZone> timeZones) {
-        screenState.postValue(new ClockPickerScreenState(State.DONE, timeZones));
+        screenState.postValue(new ClockPickerScreenState(ClockPickerState.DONE, timeZones));
     }
 
     private void onError(Throwable throwable) {
-        screenState.postValue(new ClockPickerScreenState(State.ERROR, throwable));
+        screenState.postValue(new ClockPickerScreenState(ClockPickerState.ERROR, throwable));
     }
 
     private void onMessage(@NonNull String message) {
-        screenState.postValue(new ClockPickerScreenState(State.MESSAGE, message));
+        screenState.postValue(new ClockPickerScreenState(ClockPickerState.MESSAGE, message));
     }
 
     public void onItemClicked(@NonNull final String timeZoneId) {

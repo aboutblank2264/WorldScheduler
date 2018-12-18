@@ -9,15 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.aboutblank.worldscheduler.R;
-import com.aboutblank.worldscheduler.backend.room.TimeZone;
+import com.aboutblank.worldscheduler.backend.time.TimeZone;
 import com.aboutblank.worldscheduler.ui.Keyboard;
 import com.aboutblank.worldscheduler.ui.MainActivity;
+import com.aboutblank.worldscheduler.ui.components.TimeZoneArrayAdapter;
 import com.aboutblank.worldscheduler.ui.screenstates.ClockPickerScreenState;
 import com.aboutblank.worldscheduler.viewmodels.ClockPickerViewModel;
 import com.aboutblank.worldscheduler.viewmodels.ViewModelFactory;
@@ -32,7 +32,7 @@ public class ClockPickerFragment extends BaseFragment {
 
     @BindView(R.id.pick_auto_text)
     AutoCompleteTextView autoTextView;
-    private ArrayAdapter<TimeZone> adapter;
+    private TimeZoneArrayAdapter adapter;
 
     @BindView(R.id.pick_clear_text)
     Button clearButton;
@@ -65,11 +65,12 @@ public class ClockPickerFragment extends BaseFragment {
     }
 
     private void initializeAutoTextView(List<TimeZone> timeZones) {
-        adapter = new ArrayAdapter<>(requireContext(), R.layout.clock_picker_list_item, R.id.picker_text, timeZones);
+        adapter = new TimeZoneArrayAdapter(requireContext(), R.layout.clock_picker_list_item, R.id.picker_text, timeZones);
         autoTextView.setAdapter(adapter);
         autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                autoTextView.performCompletion();
                 ClockPickerFragment.this.onItemClick(position);
             }
         });
@@ -95,13 +96,11 @@ public class ClockPickerFragment extends BaseFragment {
             case MESSAGE:
                 onMessage(screenState.getMessage());
                 break;
-            case LOADING:
-                //Do nothing, the UI should be able to be used from the get go.
-                break;
         }
     }
 
     private void onTimeZonesReceived(List<TimeZone> timeZones) {
+        Log.d("TimeZones", String.valueOf(timeZones.size()));
         if (adapter == null) {
             initializeAutoTextView(timeZones);
         } else {
@@ -125,7 +124,7 @@ public class ClockPickerFragment extends BaseFragment {
             Log.d(LOG, String.format("ItemClicked: position: %d", position));
             Log.d(LOG, "Selected time zone: " + sel);
 
-            viewModel.onItemClicked(sel.getId());
+            viewModel.onItemClicked(sel.toString());
         }
     }
 
