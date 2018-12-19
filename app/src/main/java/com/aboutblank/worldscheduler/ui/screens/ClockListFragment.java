@@ -50,6 +50,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @BindView(R.id.list_recycler)
     RecyclerView recyclerView;
     private ClockListRecyclerViewAdapter clockListAdapter;
+//    private ClockListViewAdapter clockListAdapter;
 
     @BindView(R.id.list_new_fab)
     FloatingActionButton fab;
@@ -85,12 +86,18 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         viewModel.removeObservers(this);
     }
 
     private void initializeRecyclerView() {
+//        clockListAdapter = new ClockListViewAdapter();
         clockListAdapter = new ClockListRecyclerViewAdapter(this);
         recyclerView.setAdapter(clockListAdapter);
         recyclerView.setLayoutManager

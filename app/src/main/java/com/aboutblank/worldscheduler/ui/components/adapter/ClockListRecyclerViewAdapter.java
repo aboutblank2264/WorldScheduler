@@ -128,7 +128,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
                 @Override
                 public void onClick(final View v) {
                     Log.d(LOG, "Add New");
-                    adapterMediator.popupNewSaveTime(ClockListHolder.this.getAdapterPosition());
+                    adapterMediator.popupNewSaveTime(getAdapterPosition());
                 }
             });
 
@@ -136,7 +136,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
                 @Override
                 public void onClick(final View v) {
                     Log.d(LOG, "Delete");
-                    adapterMediator.deleteClock(ClockListHolder.this.getAdapterPosition());
+                    adapterMediator.deleteClock(getAdapterPosition());
                 }
             });
         }

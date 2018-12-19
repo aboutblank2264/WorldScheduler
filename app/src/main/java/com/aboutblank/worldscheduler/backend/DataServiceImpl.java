@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 
 import com.aboutblank.worldscheduler.ThreadManager;
 import com.aboutblank.worldscheduler.backend.room.Clock;
-import com.aboutblank.worldscheduler.backend.room.ClockDao;
 import com.aboutblank.worldscheduler.backend.room.LocalDatabase;
 import com.aboutblank.worldscheduler.backend.room.SavedTime;
 import com.aboutblank.worldscheduler.backend.room.SavedTimeDao;
+import com.aboutblank.worldscheduler.backend.room.SavedTimeZone;
+import com.aboutblank.worldscheduler.backend.room.SavedTimeZoneDao;
 import com.aboutblank.worldscheduler.backend.time.TimeFormatter;
 import com.aboutblank.worldscheduler.backend.time.TimeZone;
 
@@ -18,13 +19,15 @@ import java.util.List;
 
 public class DataServiceImpl implements DataService {
 
-    private ClockDao clockDao;
+//    private ClockDao clockDao;
     private SavedTimeDao savedTimeDao;
+    private SavedTimeZoneDao savedTimeZoneDao;
     private List<TimeZone> timeZones;
 
     public DataServiceImpl(LocalDatabase localDatabase, ThreadManager threadManager) {
-        this.clockDao = localDatabase.clockDao();
+//        this.clockDao = localDatabase.clockDao();
         this.savedTimeDao = localDatabase.savedTimeDao();
+        this.savedTimeZoneDao = localDatabase.savedTimeZoneDao();
         initialize(threadManager);
     }
 
@@ -39,12 +42,12 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Clock getClockById(String timeZoneId) {
-        return clockDao.getClockById(timeZoneId);
+        return savedTimeZoneDao.getClockById(timeZoneId);
     }
 
     @Override
     public LiveData<List<Clock>> getAllClocksLive() {
-        return clockDao.getAllClocksLive();
+        return savedTimeZoneDao.getAllClocksLive();
     }
 
     @Override
@@ -54,17 +57,17 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void saveClockWithId(String timeZoneId) {
-        clockDao.insertClock(new Clock(timeZoneId));
+        savedTimeZoneDao.insert(new SavedTimeZone(timeZoneId));
     }
 
     @Override
     public void deleteClock(String timeZoneId) {
-        clockDao.deleteClock(timeZoneId);
+        savedTimeZoneDao.delete(timeZoneId);
     }
 
     @Override
-    public Clock getLocalClock() {
-        return new Clock(DateTimeZone.getDefault().getID());
+    public String getLocalTimeZone() {
+        return DateTimeZone.getDefault().getID();
     }
 
     @Override

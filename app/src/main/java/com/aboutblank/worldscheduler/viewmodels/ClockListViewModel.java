@@ -125,7 +125,7 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     private void postLocalTimeZone() {
-        postValue(ClockListScreenState.localTimeZone(getDataService().getLocalClock().getTimeZoneId()));
+        postValue(ClockListScreenState.localTimeZone(getDataService().getLocalTimeZone()));
     }
 
     private void postMillisOfDay(int hour, int minute) {

@@ -10,15 +10,15 @@ import java.util.List;
 @Dao
 public interface SavedTimeDao {
 
-    @Query("SELECT time from SavedTime where timeZoneId = :timeZoneId")
+    @Query("SELECT time from SavedTime where timeZone = :timeZoneId")
     List<Long> getTimes(String timeZoneId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addTime(SavedTime savedTime);
 
-    @Query("UPDATE SavedTime SET time = :newTime WHERE timeZoneId = :timeZoneId AND time = :oldTime")
+    @Query("UPDATE SavedTime SET time = :newTime WHERE timeZone = :timeZoneId AND time = :oldTime")
     void updateTime(String timeZoneId, long oldTime, long newTime);
 
-    @Query("DELETE FROM SavedTime where timeZoneId = :timeZoneId AND time = :time")
+    @Query("DELETE FROM SavedTime where timeZone = :timeZoneId AND time = :time")
     void delete(String timeZoneId, long time);
 }

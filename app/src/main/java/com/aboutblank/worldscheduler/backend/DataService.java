@@ -20,7 +20,7 @@ public interface DataService {
 
     void deleteClock(String timeZoneId);
 
-    Clock getLocalClock();
+    String getLocalTimeZone();
 
     String getTimeDifference(String timeZoneId);
 

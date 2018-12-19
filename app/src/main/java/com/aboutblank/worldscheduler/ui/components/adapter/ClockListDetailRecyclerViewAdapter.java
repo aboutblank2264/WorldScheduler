@@ -117,7 +117,7 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
                                     break;
                                 case R.id.delete:
                                     Log.d(LOG, "Delete");
-                                    adapterMediator.deleteSavedTime(ClockListDetailViewHolder.this.getAdapterPosition());
+                                    adapterMediator.deleteSavedTime(getAdapterPosition());
                                     break;
                             }
                             return false;
