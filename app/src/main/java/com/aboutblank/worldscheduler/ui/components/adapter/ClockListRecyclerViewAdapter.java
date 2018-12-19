@@ -53,23 +53,26 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
-        Log.d(LOG, clocks.toString());
+        Log.d(LOG + " onBindViewHolder", clocks.toString());
         Clock clock = clocks.get(position);
         holder.setClockInfo(clock);
-        holder.setExpanded(adapterMediator.getCurrentExpandedPosition() == position);
+        holder.setExpanded(adapterMediator.isExpanded(position));
 
         holder.setOnClickListener(adapterMediator.getOnClickListener());
     }
 
     @Override
     public int getItemCount() {
-        return adapterMediator.getClockCount();
+        return clocks.size();
     }
 
     public void update(List<Clock> newClocks) {
+        Log.d(LOG, "Update");
         ClockListDiffCallback callback = new ClockListDiffCallback(clocks, newClocks);
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
 
+        Log.d("DiffOld", clocks.toString());
+        Log.d("DiffNew", newClocks.toString());
         clocks.clear();
         clocks.addAll(newClocks);
         result.dispatchUpdatesTo(this);
@@ -102,7 +105,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            adapter = new ClockListDetailRecyclerViewAdapter(timeZoneId, adapterMediator);
+            adapter = new ClockListDetailRecyclerViewAdapter(adapterMediator);
             savedTimeRecyclerView.setLayoutManager(
                     new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
             savedTimeRecyclerView.setAdapter(adapter);
@@ -113,6 +116,7 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         void setClockInfo(@NonNull Clock clock) {
             Log.d(LOG, clock.toString());
             this.timeZoneId = clock.getTimeZoneId();
+            adapter.update(clock);
 
             timeZone.setText(timeZoneId);
             timeZoneCompare.setText(adapterMediator.getOffSetString(timeZoneId));
@@ -127,25 +131,22 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
             clockActionOptionButtons.setScheduleOnClick(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    Log.d(LOG, "Add New");
-                    adapterMediator.popupNewSaveTime(getAdapterPosition());
+                    Log.d(LOG, "Add New " + timeZoneId);
+                    adapterMediator.popupNewSaveTime(timeZoneId);
                 }
             });
 
             clockActionOptionButtons.setDeleteOnClick(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    Log.d(LOG, "Delete");
-                    adapterMediator.deleteClock(getAdapterPosition());
+                    Log.d(LOG, "Delete " + timeZoneId);
+                    adapterMediator.deleteClock(timeZoneId);
                 }
             });
         }
 
         void setExpanded(boolean activated) {
             setVisible(activated ? View.VISIBLE : View.GONE);
-            if (activated) {
-                adapter.update(adapterMediator.getSavedTimes(timeZoneId));
-            }
         }
 
         private void setVisible(int visible) {

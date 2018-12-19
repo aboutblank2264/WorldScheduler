@@ -106,7 +106,7 @@ public class ClockListViewModel extends BaseViewModel {
                 onFabClick();
                 break;
             case ADD_ALARM:
-                addAlarm(event.getTimeString(), event.getTag());
+                addAlarm(event.getSavedTime(), event.getTag());
                 break;
         }
     }
@@ -140,7 +140,6 @@ public class ClockListViewModel extends BaseViewModel {
                 @Override
                 public void run() {
                     getDataService().deleteClock(timeZoneId);
-                    postValue(ClockListScreenState.deleteClock(timeZoneId));
                 }
             });
         }
@@ -205,28 +204,18 @@ public class ClockListViewModel extends BaseViewModel {
         getFragmentManager().showDialog(dialogFragment, tag);
     }
 
-    public int[] convertTimeStringToNumeric(final String timeString) {
-        int[] ret = new int[2];
-        long millis = getDataService().getMillisFromTimeString(timeString);
-        ret[0] = getDataService().getHourOfDay(millis);
-        ret[1] = getDataService().getMinuteOfHour(millis);
-
-        return ret;
-    }
-
     private void onFabClick() {
         getFragmentManager().changeToPickerFragment(true);
-        postClocks();
     }
 
-    private void addAlarm(final String timeString, final String tag) {
-        int[] timeFields = convertTimeStringToNumeric(timeString);
+    private void addAlarm(final long millis, final String tag) {
+        int hour = getDataService().getHourOfDay(millis);
+        int min = getDataService().getMinuteOfHour(millis);
 
-        getFragmentManager().addAlarm(tag, timeFields[0], timeFields[1]);
+        getFragmentManager().addAlarm(tag, hour, min);
     }
 
     private void checkTimeZoneRunRunnable(final String timeZoneId, @NonNull final Runnable runnable) {
-
         if (timeZoneId == null) {
             postError(new IllegalArgumentException("TimeZoneId cannot be null"));
         } else {

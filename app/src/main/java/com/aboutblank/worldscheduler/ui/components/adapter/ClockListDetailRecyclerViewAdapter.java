@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
+import com.aboutblank.worldscheduler.backend.room.Clock;
 import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
 import com.aboutblank.worldscheduler.ui.components.utils.ClockDetailsDiffCallback;
 
@@ -28,8 +29,7 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
     private List<Long> savedTimes;
     private ClockListAdapterMediator adapterMediator;
 
-    ClockListDetailRecyclerViewAdapter(final String timeZoneId, final ClockListAdapterMediator adapterMediator) {
-        this.timeZoneId = timeZoneId;
+    ClockListDetailRecyclerViewAdapter(final ClockListAdapterMediator adapterMediator) {
         this.adapterMediator = adapterMediator;
         this.savedTimes = new ArrayList<>();
     }
@@ -43,17 +43,19 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListDetailViewHolder holder, final int position) {
-        String[] times = adapterMediator.getTimeStrings(savedTimes.get(position));
+        String[] times = adapterMediator.getTimeStrings(timeZoneId, savedTimes.get(position));
         holder.setMillis(savedTimes.get(position));
         holder.setTimeStrings(times[0], times[1]);
     }
 
-    void update(List<Long> times) {
-        ClockDetailsDiffCallback callback = new ClockDetailsDiffCallback(savedTimes, times);
+    void update(Clock clock) {
+        timeZoneId = clock.getTimeZoneId();
+
+        ClockDetailsDiffCallback callback = new ClockDetailsDiffCallback(savedTimes, clock.getSavedTimes());
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
 
         savedTimes.clear();
-        savedTimes.addAll(times);
+        savedTimes.addAll(clock.getSavedTimes());
 
         result.dispatchUpdatesTo(this);
     }
@@ -113,11 +115,11 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
                             switch (item.getItemId()) {
                                 case R.id.add_new:
                                     Log.d(LOG, "Add Alarm");
-                                    adapterMediator.addAlarm(String.valueOf(localClock.getText()));
+                                    adapterMediator.addAlarm(millis);
                                     break;
                                 case R.id.delete:
                                     Log.d(LOG, "Delete");
-                                    adapterMediator.deleteSavedTime(getAdapterPosition());
+                                    adapterMediator.deleteSavedTime(timeZoneId, millis);
                                     break;
                             }
                             return false;

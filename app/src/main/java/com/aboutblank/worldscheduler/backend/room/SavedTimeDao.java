@@ -19,6 +19,9 @@ public interface SavedTimeDao {
     @Query("UPDATE SavedTime SET time = :newTime WHERE timeZone = :timeZoneId AND time = :oldTime")
     void updateTime(String timeZoneId, long oldTime, long newTime);
 
-    @Query("DELETE FROM SavedTime where timeZone = :timeZoneId AND time = :time")
+    @Query("DELETE from SavedTime where timeZone = :timeZoneId AND time = :time")
     void delete(String timeZoneId, long time);
+
+    @Query("DELETE from SavedTime where timeZone = :timeZoneId")
+    void delete(String timeZoneId);
 }

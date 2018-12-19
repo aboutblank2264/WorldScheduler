@@ -3,13 +3,18 @@ package com.aboutblank.worldscheduler.backend.room;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity/*(indices = {@Index(value = "timeZone", unique = true)},
+        foreignKeys = {
+                @ForeignKey(entity = SavedTimeZone.class,
+                        parentColumns = "timeZoneId",
+                        childColumns = "timeZone",
+                        onDelete = ForeignKey.CASCADE)})*/
 public class SavedTime {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public long time;
     public String timeZone;
+    public long time;
 
     public SavedTime(final long time, final String timeZone) {
         this.id = 0;

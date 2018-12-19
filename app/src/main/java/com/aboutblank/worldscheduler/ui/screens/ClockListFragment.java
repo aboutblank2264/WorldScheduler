@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -31,10 +32,7 @@ import com.aboutblank.worldscheduler.viewmodels.events.ClockListEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -42,7 +40,7 @@ import butterknife.OnClick;
 public class ClockListFragment extends BaseFragment implements ClockListAdapterMediator {
     private final static String LOG = ClockListFragment.class.getSimpleName();
 
-    private final static String EXPAND_POSITION = "expandPosition";
+    private final static String EXPEND_POSITION = "expended_position";
 
     @BindView(R.id.list_clock)
     SimpleDateClock mainClock;
@@ -50,7 +48,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @BindView(R.id.list_recycler)
     RecyclerView recyclerView;
     private ClockListRecyclerViewAdapter clockListAdapter;
-//    private ClockListViewAdapter clockListAdapter;
 
     @BindView(R.id.list_new_fab)
     FloatingActionButton fab;
@@ -58,7 +55,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     private ClockListViewModel viewModel;
     private int currentExpandedPosition = -1;
     private List<Clock> clocks = new ArrayList<>();
-    private Map<String, List<Long>> savedTimeMap = new HashMap<>();
 
     private Observer<ClockListScreenState> observer = new Observer<ClockListScreenState>() {
         @Override
@@ -88,6 +84,17 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG, "onSaveInstanceState, expandedPosition : " + currentExpandedPosition);
+        outState.putInt(EXPEND_POSITION, currentExpandedPosition);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            setCurrentExpandedPosition(savedInstanceState.getInt(EXPEND_POSITION, -1));
+            Log.d(LOG, "onViewStateRestored, expandedPosition : " + currentExpandedPosition);
+        }
     }
 
     @Override
@@ -97,7 +104,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     private void initializeRecyclerView() {
-//        clockListAdapter = new ClockListViewAdapter();
         clockListAdapter = new ClockListRecyclerViewAdapter(this);
         recyclerView.setAdapter(clockListAdapter);
         recyclerView.setLayoutManager
@@ -131,9 +137,13 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
                 onUpdateSavedTimes(screenState.getTimeZoneId(), screenState.getSavedTimes());
                 break;
             case DELETE_CLOCK:
-                onDeleteClock(screenState.getTimeZoneId());
                 break;
         }
+    }
+
+    private void setCurrentExpandedPosition(int i) {
+        Log.d("CurrentExpandedPosition", "Changed to " + i);
+        currentExpandedPosition = i;
     }
 
     private void onClocksReceived(List<Clock> clocks) {
@@ -159,18 +169,11 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     private void onUpdateSavedTimes(@NonNull String timeZoneId, List<Long> savedTimes) {
-        Log.d(LOG, String.format("TimeZone: %s, SavedTimes: %s", timeZoneId, savedTimes.toString()));
-
-        savedTimeMap.put(timeZoneId, savedTimes);
+        Log.d(LOG, String.format("onUpdateSavedTimes\nTimeZone: %s, SavedTimes: %s", timeZoneId, savedTimes.toString()));
 
         if (clocks.get(currentExpandedPosition).getTimeZoneId().equals(timeZoneId)) {
             clockListAdapter.notifyItemChanged(currentExpandedPosition);
         }
-    }
-
-    private void onDeleteClock(String timeZoneId) {
-        expandClockView(-1, true);
-        savedTimeMap.remove(timeZoneId);
     }
 
     @OnClick(R.id.list_new_fab)
@@ -188,19 +191,15 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     /*------------------------------------------------------------------*/
 
     @Override
-    public int getClockCount() {
-        return clocks.size();
+    public boolean isExpanded(int position) {
+        Log.d(LOG, String.format("isExpanded: %d position %d", currentExpandedPosition, position));
+        return currentExpandedPosition != -1 && currentExpandedPosition == position;
     }
 
-    @Override
-    public int getCurrentExpandedPosition() {
-        return currentExpandedPosition;
-    }
-
-    private void expandClockView(int position, boolean overridePrevious) {
-        Log.d(LOG, "OnClick " + currentExpandedPosition);
-        currentExpandedPosition = (currentExpandedPosition == position && overridePrevious) ? -1 : position;
-//        TransitionManager.beginDelayedTransition(recyclerView);
+    private void expandCollapseView(int position) {
+        Log.d(LOG, String.format("OnClick %d to %d", currentExpandedPosition, position));
+        setCurrentExpandedPosition(currentExpandedPosition == position ? -1 : position);
+        TransitionManager.beginDelayedTransition(recyclerView);
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
@@ -209,7 +208,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                ClockListFragment.this.expandClockView(recyclerView.getChildAdapterPosition(v), true);
+                expandCollapseView(recyclerView.getChildAdapterPosition(v));
             }
         };
     }
@@ -219,11 +218,11 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return viewModel.getOffSetString(timeZoneId);
     }
 
-    private TimePickerDialog.OnTimeSetListener getOnNewSavedTimeListener(final int position) {
+    private TimePickerDialog.OnTimeSetListener getOnNewSavedTimeListener(final String timeZoneId) {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(final TimePicker view, final int hour, final int minute) {
-                postEvent(ClockListEvent.addSavedTime(clocks.get(position).getTimeZoneId(), hour, minute));
+                postEvent(ClockListEvent.addSavedTime(timeZoneId, hour, minute));
             }
         };
     }
@@ -238,21 +237,22 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     @Override
-    public void deleteClock(final int position) {
-        postEvent(ClockListEvent.deleteClock(clocks.get(position).getTimeZoneId()));
+    public void deleteClock(final String timeZoneId) {
+        setCurrentExpandedPosition(-1);
+        postEvent(ClockListEvent.deleteClock(timeZoneId));
     }
 
     @Override
-    public void deleteSavedTime(final long savedTime) {
-        postEvent(ClockListEvent.deleteSavedTime(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTime));
+    public void deleteSavedTime(@NonNull final String timeZoneId, final long savedTime) {
+        postEvent(ClockListEvent.deleteSavedTime(timeZoneId, savedTime));
     }
 
     @Override
-    public void addAlarm(final String timeString) {
+    public void addAlarm(final long savedTime) {
         TagDialog tagDialog = TagDialog.newInstance(new TagDialog.TagDialogListener() {
             @Override
             public void onPositiveClick(final TagDialog dialog, final String message) {
-                postEvent(ClockListEvent.addAlarm(timeString, message));
+                postEvent(ClockListEvent.addAlarm(savedTime, message));
                 dialog.dismiss();
             }
 
@@ -266,18 +266,10 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     @Override
-    public void popupNewSaveTime(final int positionOfClock) {
-        new TimePickerDialog(requireContext(), getOnNewSavedTimeListener(positionOfClock), 0, 0, false)
+    public void popupNewSaveTime(final String timeZoneId) {
+        new TimePickerDialog(requireContext(), getOnNewSavedTimeListener(timeZoneId), 0, 0, false)
                 .show();
     }
-
-    @Override
-    public void popupChangeSaveTime(final String timeZoneId, final String timeString, final long oldSavedTime) {
-        int[] timeFields = viewModel.convertTimeStringToNumeric(timeString);
-        new TimePickerDialog(requireContext(), getOnChangeSavedTimeListener(currentExpandedPosition, oldSavedTime),
-                timeFields[0], timeFields[1], false);
-    }
-
 
     @Override
     public IconPopupMenu getPopupMenu(View view) {
@@ -286,20 +278,10 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     @Override
-    public String[] getTimeStrings(final long savedTime) {
-        Log.d(LOG, Arrays.toString(viewModel.getFormattedTimeStrings(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTime)));
+    public String[] getTimeStrings(final String timeZoneId, final long savedTime) {
+        Log.d(LOG, Arrays.toString(viewModel.getFormattedTimeStrings(timeZoneId, savedTime)));
 
-        return viewModel.getFormattedTimeStrings(clocks.get(currentExpandedPosition).getTimeZoneId(), savedTime);
-    }
-
-    @Override
-    public List<Long> getSavedTimes(final String timeZoneId) {
-        if (savedTimeMap.get(timeZoneId) != null) {
-            return savedTimeMap.get(timeZoneId);
-        }
-        postEvent(ClockListEvent.getSavedTimes(timeZoneId));
-
-        return Collections.emptyList();
+        return viewModel.getFormattedTimeStrings(timeZoneId, savedTime);
     }
 
     private void postEvent(ClockListEvent event) {

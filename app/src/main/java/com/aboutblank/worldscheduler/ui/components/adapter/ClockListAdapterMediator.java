@@ -5,30 +5,22 @@ import android.view.View;
 
 import com.aboutblank.worldscheduler.ui.components.IconPopupMenu;
 
-import java.util.List;
-
 public interface ClockListAdapterMediator {
-    int getClockCount();
-
-    int getCurrentExpandedPosition();
+    boolean isExpanded(int position);
 
     View.OnClickListener getOnClickListener();
 
     String getOffSetString(@NonNull String timeZoneId);
 
-    void addAlarm(String timeString);
+    void addAlarm(long savedTime);
 
-    void deleteClock(int position);
+    void deleteClock(String timeZoneId);
 
-    void deleteSavedTime(long savedTime);
+    void deleteSavedTime(String timeZoneId, long savedTime);
 
-    void popupNewSaveTime(int positionOfClock);
-
-    void popupChangeSaveTime(String timeZoneId, String timeString, long oldSavedTime);
+    void popupNewSaveTime(String timeZoneId);
 
     IconPopupMenu getPopupMenu(View view);
 
-    String[] getTimeStrings(long savedTime);
-
-    List<Long> getSavedTimes(String timeZoneId);
+    String[] getTimeStrings(String timeZoneId, long savedTime);
 }

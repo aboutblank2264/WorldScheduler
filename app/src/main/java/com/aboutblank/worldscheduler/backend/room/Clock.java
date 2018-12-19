@@ -15,7 +15,6 @@ public class Clock {
     projection = {"time"})
     public List<Long> savedTimes;
 
-
     public String getTimeZoneId() {
         return timeZoneId.getTimeZoneId();
     }
@@ -26,9 +25,8 @@ public class Clock {
 
     @Override
     public String toString() {
-        return "Clock{" +
-                "timeZoneId=" + timeZoneId +
-                ", savedTimes=" + savedTimes +
-                '}';
+        return "Clock : " +
+                "timeZoneId = " + timeZoneId +
+                ", savedTimes = " + savedTimes;
     }
 }

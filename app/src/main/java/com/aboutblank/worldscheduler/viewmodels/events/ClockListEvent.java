@@ -47,7 +47,7 @@ public final class ClockListEvent {
                 bundle.putLong(SAVED_TIME, (long) data[1]);
                 break;
             case ADD_ALARM:
-                bundle.putString(TIMESTR, (String) data[0]);
+                bundle.putLong(SAVED_TIME, (long) data[0]);
                 bundle.putString(TAG, (String) data[1]);
                 break;
             case GET_LOCAL_TIMEZONE:
@@ -85,8 +85,8 @@ public final class ClockListEvent {
         return new ClockListEvent(Event.DELETE_SAVED_TIME, timeZoneId, savedTime);
     }
 
-    public static ClockListEvent addAlarm(@NonNull final String timeString, final String tag) {
-        return new ClockListEvent(Event.ADD_ALARM, timeString, tag);
+    public static ClockListEvent addAlarm(@NonNull final long savedTime, final String tag) {
+        return new ClockListEvent(Event.ADD_ALARM, savedTime, tag);
     }
 
     public static ClockListEvent getLocalTimeZone() {

@@ -63,6 +63,7 @@ public class DataServiceImpl implements DataService {
     @Override
     public void deleteClock(String timeZoneId) {
         savedTimeZoneDao.delete(timeZoneId);
+        savedTimeDao.delete(timeZoneId);
     }
 
     @Override

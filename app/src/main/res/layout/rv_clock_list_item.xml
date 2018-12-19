@@ -51,7 +51,6 @@
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"
         app:layout_constraintBottom_toBottomOf = "parent"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf = "@id/item_saved_time_rv"
         />
 </android.support.constraint.ConstraintLayout>
