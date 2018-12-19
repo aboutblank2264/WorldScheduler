@@ -25,11 +25,14 @@ public class TimeZoneArrayAdapter extends ArrayAdapter<TimeZone> {
         return filter;
     }
 
+    private final static char SPACE = ' ';
+    private final static char UNDER = '_';
+
     private final Filter filter = new Filter() {
 
         @Override
         public CharSequence convertResultToString(final Object resultValue) {
-            return resultValue.toString().replace("_", " ");
+            return resultValue.toString().replace(UNDER, SPACE);
         }
 
         @Override
@@ -50,7 +53,7 @@ public class TimeZoneArrayAdapter extends ArrayAdapter<TimeZone> {
         }
 
         private boolean contains(TimeZone parent, String constraint) {
-            return parent.getCity().toLowerCase().startsWith(constraint) ||
+            return parent.getCity().replace(UNDER, SPACE).toLowerCase().startsWith(constraint) ||
                     parent.getContinent().toLowerCase().startsWith(constraint);
         }
 
@@ -60,10 +63,7 @@ public class TimeZoneArrayAdapter extends ArrayAdapter<TimeZone> {
             clear();
             if (results != null && results.count > 0) {
                 addAll((List<TimeZone>) results.values);
-            } else {
-                addAll(items);
             }
-//            notifyDataSetChanged();
         }
     };
 }
