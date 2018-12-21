@@ -10,7 +10,6 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public abstract class TimeFormatter {
     private final static long MILLIS_TO_HOUR = (60 * 60 * 1000);
@@ -27,7 +26,7 @@ public abstract class TimeFormatter {
 
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(TIME_FORMAT);
 
-    public static List<String> formatList(Set<String> cities) {
+    public static List<String> formatList(List<String> cities) {
         List<String> ret = new ArrayList<>();
 
         for (String city : cities) {
