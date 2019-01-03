@@ -70,7 +70,7 @@ public class ClockPickerFragment extends BaseFragment {
         autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                autoTextView.performCompletion();
+//                autoTextView.performCompletion();
                 ClockPickerFragment.this.onItemClick(position);
             }
         });

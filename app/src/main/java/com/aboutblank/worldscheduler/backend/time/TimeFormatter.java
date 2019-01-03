@@ -50,17 +50,6 @@ public abstract class TimeFormatter {
 
         return timeZones;
     }
-//    public static List<String> getListOfTimeZones() {
-//        List<String> timeZones = new ArrayList<>();
-//
-//        for(String id : DateTimeZone.getAvailableIDs()) {
-//            if(checkIfValid(id)) {
-//                timeZones.add(id);
-//            }
-//        }
-//
-//        return timeZones;
-//    }
 
     private static TimeZone toTimeZone(String timeZoneId) {
         int lastIndexOf = timeZoneId.lastIndexOf(SLASH);
@@ -102,6 +91,11 @@ public abstract class TimeFormatter {
 
     public static long toMillisOfTimeZone(long millisOfDay, String timeZoneId) {
         return new LocalTime(millisOfDay).toDateTimeToday(DateTimeZone.forID(timeZoneId)).getMillisOfDay();
+    }
+
+    public static long convertMillisOfDayFromTimeZoneToDefault(long millisOfDay, String timeZoneId) {
+        return new LocalTime(millisOfDay, DateTimeZone.forID(timeZoneId))
+                .toDateTimeToday(DateTimeZone.getDefault()).getMillisOfDay();
     }
 
     public static String toClockString(long millisOfDay) {

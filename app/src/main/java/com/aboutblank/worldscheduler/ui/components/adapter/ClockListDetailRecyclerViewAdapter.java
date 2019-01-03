@@ -77,12 +77,19 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
 
         private long millis;
 
-//        private View.OnClickListener listener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View v) {
-//                adapterMediator.popupChangeSaveTime(timeZoneId, String.valueOf(((TextView) v).getText()), millis);
-//            }
-//        };
+        private View.OnClickListener localListener = new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                adapterMediator.popupChangeSavedTime(timeZoneId, millis, (String) localClock.getText());
+            }
+        };
+
+        private View.OnClickListener otherListener = new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                adapterMediator.popupChangeSavedTimeWithConversion(timeZoneId, millis, (String) otherClock.getText());
+            }
+        };
 
         ClockListDetailViewHolder(final View itemView) {
             super(itemView);
@@ -99,8 +106,8 @@ public class ClockListDetailRecyclerViewAdapter extends RecyclerView.Adapter<Clo
             localClock.setText(localTime);
             otherClock.setText(otherTime);
 
-//            localClock.setOnClickListener(listener);
-//            otherClock.setOnClickListener(listener);
+            localClock.setOnClickListener(localListener);
+            otherClock.setOnClickListener(otherListener);
         }
 
         void setMenuButton() {

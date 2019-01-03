@@ -5,12 +5,13 @@ import android.support.annotation.NonNull;
 
 public final class ClockListEvent {
     private final static String TIMEZONEID = "timezoneId";
-    private final static String TIMEPOSN = "timePosn";
     private final static String TIMESTR = "timeStr";
     private final static String TAG = "tag";
     private final static String HOUR = "hour";
     private final static String MINUTE = "minute";
-    private final static String SAVED_TIME = "oldSavedTime";
+    private final static String SAVED_TIME = "savedTime";
+    private final static String CONVERT = "convert";
+
 
     private Event event;
     private Bundle bundle;
@@ -41,6 +42,7 @@ public final class ClockListEvent {
                 bundle.putInt(HOUR, (int) data[1]);
                 bundle.putInt(MINUTE, (int) data[2]);
                 bundle.putLong(SAVED_TIME, (long) data[3]);
+                bundle.putBoolean(CONVERT, (boolean) data[4]);
                 break;
             case DELETE_SAVED_TIME:
                 bundle.putString(TIMEZONEID, (String) data[0]);
@@ -78,7 +80,12 @@ public final class ClockListEvent {
 
     public static ClockListEvent changeSavedTime(@NonNull final String timeZoneId,
                                                  int hour, int minute, long oldSavedTime) {
-        return new ClockListEvent(Event.CHANGE_SAVED_TIME, timeZoneId, hour, minute, oldSavedTime);
+        return changeSavedTime(timeZoneId, hour, minute, oldSavedTime, false);
+    }
+
+    public static ClockListEvent changeSavedTime(@NonNull final String timeZoneId,
+                                                 int hour, int minute, long oldSavedTime, boolean convert) {
+        return new ClockListEvent(Event.CHANGE_SAVED_TIME, timeZoneId, hour, minute, oldSavedTime, convert);
     }
 
     public static ClockListEvent deleteSavedTime(@NonNull final String timeZoneId, final long savedTime) {
@@ -127,6 +134,10 @@ public final class ClockListEvent {
 
     public String getTag() {
         return bundle.getString(TAG);
+    }
+
+    public boolean getConvert() {
+        return bundle.getBoolean(CONVERT);
     }
 
     @Override

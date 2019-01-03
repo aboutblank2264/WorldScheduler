@@ -20,6 +20,10 @@ public interface ClockListAdapterMediator {
 
     void popupNewSaveTime(String timeZoneId);
 
+    void popupChangeSavedTime(String timezoneId, long savedTime, String timeString);
+
+    void popupChangeSavedTimeWithConversion(String timezoneId, long savedTime, String timeString);
+
     IconPopupMenu getPopupMenu(View view);
 
     String[] getTimeStrings(String timeZoneId, long savedTime);

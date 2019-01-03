@@ -97,6 +97,12 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
+    public void changeSavedTimeWithTimeZoneMillis(@NonNull final String timeZoneId, int hour, int minute, long oldSavedTime) {
+        long millis = TimeFormatter.convertMillisOfDayFromTimeZoneToDefault(toMillisOfDay(hour, minute), timeZoneId);
+        savedTimeDao.updateTime(timeZoneId, oldSavedTime, millis);
+    }
+
+    @Override
     public void deleteSavedTime(@NonNull final String timeZoneId, long oldSavedTime) {
         savedTimeDao.delete(timeZoneId, oldSavedTime);
     }

@@ -17,7 +17,7 @@
         <item name = "windowNoTitle">true</item>
     </style>
 
-    <style name = "AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu" >
+    <style name = "AppTheme.PopupMenu" parent = "Widget.AppCompat.PopupMenu">
         <item name = "iconTint">?android:attr/colorPrimaryDark</item>
     </style>
 
@@ -29,6 +29,12 @@
     <style name = "AppTheme.TextAppearance">
         <item name = "android:textColor">?android:attr/textColorPrimary</item>
         <item name = "android:textSize">@dimen/header_text_size</item>
+    </style>
+
+    <style name = "AppTheme.TextAppearance.Main">
+        <item name = "android:textColor">?android:attr/textColorPrimary</item>
+        <item name = "android:singleLine">true</item>
+        <item name = "android:ellipsize">start</item>
     </style>
 
     <style name = "AppTheme.TextAppearance.SubText">

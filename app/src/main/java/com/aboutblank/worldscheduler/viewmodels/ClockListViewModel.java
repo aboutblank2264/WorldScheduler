@@ -88,7 +88,7 @@ public class ClockListViewModel extends BaseViewModel {
                 postDeleteSavedTime(event.getTimezoneId(), event.getSavedTime());
                 break;
             case CHANGE_SAVED_TIME:
-                postChangeSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute(), event.getSavedTime());
+                postChangeSavedTime(event.getTimezoneId(), event.getHour(), event.getMinute(), event.getSavedTime(), event.getConvert());
                 break;
             case GET_MILLIS_OF_DAY:
                 postMillisOfDay(event.getHour(), event.getMinute());
@@ -172,12 +172,18 @@ public class ClockListViewModel extends BaseViewModel {
     }
 
     @SuppressLint("DefaultLocale")
-    private void postChangeSavedTime(final String timeZoneId, final int hour, final int minute, final long oldSavedTime) {
-        debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d, oldTime: %d", timeZoneId, hour, minute, oldSavedTime));
+    private void postChangeSavedTime(final String timeZoneId,
+                                     final int hour, final int minute, final long oldSavedTime,
+                                     final boolean convert) {
+        debug(LOG, String.format("TimeZoneId: %s, hour: %d, minute: %d, oldTime: %d, convert: %b", timeZoneId, hour, minute, oldSavedTime, convert));
         checkTimeZoneRunRunnable(timeZoneId, new Runnable() {
             @Override
             public void run() {
-                getDataService().changeSavedTime(timeZoneId, hour, minute, oldSavedTime);
+                if (convert) {
+                    getDataService().changeSavedTimeWithTimeZoneMillis(timeZoneId, hour, minute, oldSavedTime);
+                } else {
+                    getDataService().changeSavedTime(timeZoneId, hour, minute, oldSavedTime);
+                }
             }
         });
     }
@@ -198,6 +204,15 @@ public class ClockListViewModel extends BaseViewModel {
 
     public String[] getFormattedTimeStrings(final String timeZoneId, final long savedTime) {
         return getDataService().getFormattedTimeStrings(timeZoneId, savedTime);
+    }
+
+    public int[] getHourAndMinuteFromTimeSring(final String timeString) {
+        long time = getDataService().getMillisFromTimeString(timeString);
+        int[] ret = new int[2];
+        ret[0] = getDataService().getHourOfDay(time);
+        ret[1] = getDataService().getMinuteOfHour(time);
+
+        return ret;
     }
 
     public void showDialog(DialogFragment dialogFragment, String tag) {

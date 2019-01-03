@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.aboutblank.worldscheduler.R;
 import com.aboutblank.worldscheduler.backend.room.Clock;
+import com.aboutblank.worldscheduler.ui.TimeZoneUtils;
 import com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons;
 import com.aboutblank.worldscheduler.ui.components.SimpleDateClock;
 import com.aboutblank.worldscheduler.ui.components.utils.ClockListDiffCallback;
@@ -53,7 +54,6 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
 
     @Override
     public void onBindViewHolder(@NonNull final ClockListHolder holder, final int position) {
-        Log.d(LOG + " onBindViewHolder", clocks.toString());
         Clock clock = clocks.get(position);
         holder.setClockInfo(clock);
         holder.setExpanded(adapterMediator.isExpanded(position));
@@ -114,11 +114,10 @@ public class ClockListRecyclerViewAdapter extends RecyclerView.Adapter<ClockList
         }
 
         void setClockInfo(@NonNull Clock clock) {
-            Log.d(LOG, clock.toString());
             this.timeZoneId = clock.getTimeZoneId();
             adapter.update(clock);
 
-            timeZone.setText(timeZoneId);
+            timeZone.setText(TimeZoneUtils.format(timeZoneId));
             timeZoneCompare.setText(adapterMediator.getOffSetString(timeZoneId));
             simpleDateClock.setTimeZone(timeZoneId);
         }

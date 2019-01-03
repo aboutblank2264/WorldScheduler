@@ -32,6 +32,8 @@ public interface DataService {
 
     void changeSavedTime(@NonNull String timeZoneId, int hour, int minute, long oldSavedTime);
 
+    void changeSavedTimeWithTimeZoneMillis(@NonNull String timeZoneId, int hour, int minute, long oldSavedTime);
+
     void deleteSavedTime(@NonNull String timeZoneId, long savedTime);
 
     String[] getFormattedTimeStrings(@NonNull String timeZoneId, long savedTime);

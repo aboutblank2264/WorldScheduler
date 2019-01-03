@@ -91,7 +91,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             setCurrentExpandedPosition(savedInstanceState.getInt(EXPEND_POSITION, -1));
             Log.d(LOG, "onViewStateRestored, expandedPosition : " + currentExpandedPosition);
         }
@@ -142,7 +142,6 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
     }
 
     private void setCurrentExpandedPosition(int i) {
-        Log.d("CurrentExpandedPosition", "Changed to " + i);
         currentExpandedPosition = i;
     }
 
@@ -222,28 +221,42 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(final TimePicker view, final int hour, final int minute) {
+                Log.d(LOG, String.format("Add saved time: %s, %d:%d", timeZoneId, hour, minute));
                 postEvent(ClockListEvent.addSavedTime(timeZoneId, hour, minute));
             }
         };
     }
 
-    private TimePickerDialog.OnTimeSetListener getOnChangeSavedTimeListener(final int position, final long oldSavedTime) {
+    private TimePickerDialog.OnTimeSetListener getOnChangeSavedTimeListener(final String timeZoneId, final long millis) {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(final TimePicker view, final int hour, final int minute) {
-                postEvent(ClockListEvent.changeSavedTime(clocks.get(position).getTimeZoneId(), hour, minute, oldSavedTime));
+                Log.d(LOG, String.format("Change saved time: %s, %d:%d", timeZoneId, hour, minute));
+                postEvent(ClockListEvent.changeSavedTime(timeZoneId, hour, minute, millis));
+            }
+        };
+    }
+
+    private TimePickerDialog.OnTimeSetListener getOnChangeSavedTimeListenerWithConversion(final String timeZoneId, final long millis) {
+        return new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(final TimePicker view, final int hour, final int minute) {
+                Log.d(LOG, String.format("Change saved time: %s, %d:%d, convert", timeZoneId, hour, minute));
+                postEvent(ClockListEvent.changeSavedTime(timeZoneId, hour, minute, millis, true));
             }
         };
     }
 
     @Override
     public void deleteClock(final String timeZoneId) {
+        Log.d(LOG, "Deleting clock: " + timeZoneId);
         setCurrentExpandedPosition(-1);
         postEvent(ClockListEvent.deleteClock(timeZoneId));
     }
 
     @Override
     public void deleteSavedTime(@NonNull final String timeZoneId, final long savedTime) {
+        Log.d(LOG, String.format("Deleting saved time: %s, %d", timeZoneId, savedTime));
         postEvent(ClockListEvent.deleteSavedTime(timeZoneId, savedTime));
     }
 
@@ -252,6 +265,7 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
         TagDialog tagDialog = TagDialog.newInstance(new TagDialog.TagDialogListener() {
             @Override
             public void onPositiveClick(final TagDialog dialog, final String message) {
+                Log.d(LOG, String.format("Add alarm time: %d, tag: %s", savedTime, message));
                 postEvent(ClockListEvent.addAlarm(savedTime, message));
                 dialog.dismiss();
             }
@@ -261,14 +275,27 @@ public class ClockListFragment extends BaseFragment implements ClockListAdapterM
                 dialog.dismiss();
             }
         });
-
         viewModel.showDialog(tagDialog, "Add Alarm");
     }
 
     @Override
     public void popupNewSaveTime(final String timeZoneId) {
-        new TimePickerDialog(requireContext(), getOnNewSavedTimeListener(timeZoneId), 0, 0, false)
-                .show();
+        new TimePickerDialog(requireContext(), getOnNewSavedTimeListener(timeZoneId),
+                0, 0, false).show();
+    }
+
+    @Override
+    public void popupChangeSavedTime(final String timezoneId, final long savedTime, final String timeString) {
+        int[] hourMinute = viewModel.getHourAndMinuteFromTimeSring(timeString);
+        new TimePickerDialog(requireContext(), getOnChangeSavedTimeListener(timezoneId, savedTime),
+                hourMinute[0], hourMinute[1], false).show();
+    }
+
+    @Override
+    public void popupChangeSavedTimeWithConversion(final String timezoneId, final long savedTime, final String timeString) {
+        int[] hourMinute = viewModel.getHourAndMinuteFromTimeSring(timeString);
+        new TimePickerDialog(requireContext(), getOnChangeSavedTimeListenerWithConversion(timezoneId, savedTime),
+                hourMinute[0], hourMinute[1], false).show();
     }
 
     @Override
