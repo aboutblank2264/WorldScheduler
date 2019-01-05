@@ -29,7 +29,7 @@
         app:layout_constraintTop_toBottomOf = "@id/item_timezone"
         />
 
-    <com.aboutblank.worldscheduler.ui.components.SimpleDateClock
+    <com.aboutblank.world_clock.ui.components.SimpleDateClock
         android:id = "@+id/item_time"
         android:layout_width = "wrap_content"
         android:layout_height = "wrap_content"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toBottomOf = "@id/item_compare"
         />
 
-    <com.aboutblank.worldscheduler.ui.components.ClockActionOptionButtons
+    <com.aboutblank.world_clock.ui.components.ClockActionOptionButtons
         android:id = "@+id/item_clock_options"
         android:layout_width = "match_parent"
         android:layout_height = "wrap_content"

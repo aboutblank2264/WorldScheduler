@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:tools = "http://schemas.android.com/tools"
-    package = "com.aboutblank.worldscheduler">
+    package = "com.aboutblank.world_clock">
 
     <uses-permission android:name = "com.android.alarm.permission.SET_ALARM" />
 
     <application
-        android:name = ".WorldApplication"
+        android:name = "com.aboutblank.world_clock.WorldApplication"
         android:allowBackup = "true"
+        android:fullBackupContent = "true"
         android:icon = "@mipmap/ic_launcher"
         android:label = "@string/app_name"
-        android:roundIcon = "@mipmap/ic_launcher_round"
+        android:roundIcon = "@mipmap/ic_launcher"
         android:supportsRtl = "true"
         android:theme = "@style/AppTheme"
         android:windowSoftInputMode = "stateAlwaysHidden"
         tools:ignore = "GoogleAppIndexingWarning">
         <activity
-            android:name = ".ui.MainActivity"
+            android:name = "com.aboutblank.world_clock.ui.MainActivity"
             android:label = "@string/app_name"
             android:theme = "@style/AppTheme.NoActionBar">
             <intent-filter>

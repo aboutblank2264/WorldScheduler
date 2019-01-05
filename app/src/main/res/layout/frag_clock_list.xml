@@ -10,7 +10,7 @@
         android:layout_height = "match_parent"
         >
 
-        <com.aboutblank.worldscheduler.ui.components.SimpleDateClock
+        <com.aboutblank.world_clock.ui.components.SimpleDateClock
             android:id = "@+id/list_clock"
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
