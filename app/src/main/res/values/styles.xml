@@ -4,12 +4,13 @@
     <style name = "AppTheme" parent = "Theme.AppCompat.Light.DarkActionBar">
         <item name = "colorPrimary">@color/primaryColor</item>
         <item name = "colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name = "colorAccent">@color/primaryAccentColor</item>
+        <item name = "colorAccent">@color/primaryAccent</item>
         <item name = "android:divider">@color/secondaryAccentColor</item>
         <item name = "android:textColorPrimary">@color/primaryTextColor</item>
         <item name = "android:textColorSecondary">@color/secondaryTextColor</item>
         <item name = "android:textColorPrimaryInverse">@color/inverseTextColor</item>
         <item name = "android:dropDownListViewStyle">@style/AppTheme.DropDown</item>
+        <item name = "android:statusBarColor">@color/primaryAccentDark</item>
     </style>
 
     <style name = "AppTheme.NoActionBar">
@@ -17,7 +18,7 @@
         <item name = "windowNoTitle">true</item>
     </style>
 
-    <style name = "AppTheme.Toolbar" parent = "ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name = "AppTheme.Toolbar">
         <item name = "android:minHeight">?android:attr/actionBarSize</item>
         <item name = "titleTextColor">?android:attr/textColorPrimaryInverse</item>
     </style>

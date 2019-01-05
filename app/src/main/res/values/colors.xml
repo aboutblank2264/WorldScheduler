@@ -1,12 +1,12 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-  <color name="primaryColor">#3399ff</color>
-  <color name="primaryLightColor">#ffffff</color>
-  <color name="primaryDarkColor">#222222</color>
-  <color name="primaryAccentColor">#3399ff</color>
-  <!--<color name="primaryAccentColor">#1a1a1a</color>-->
-  <color name="secondaryAccentColor">#cccccc</color>
-  <color name="primaryTextColor">#000000</color>
-  <color name="secondaryTextColor">#333333</color>
-  <color name="inverseTextColor">#ffffff</color>
+    <color name = "primaryColor">#3399ff</color>
+    <color name = "primaryLightColor">#ffffff</color>
+    <color name = "primaryDarkColor">#222222</color>
+    <color name = "primaryAccent">#3399ff</color>
+    <color name = "primaryAccentDark">#2261a1</color>
+    <color name = "secondaryAccentColor">#cccccc</color>
+    <color name = "primaryTextColor">#000000</color>
+    <color name = "secondaryTextColor">#333333</color>
+    <color name = "inverseTextColor">#ffffff</color>
 </resources>
